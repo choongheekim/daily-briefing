@@ -263,7 +263,7 @@ def story_card(s: dict, num: int, page: int, total: int, photo=None) -> Image.Im
     d.text((tx + 22, 124), tag, font=tag_f, fill=FG)
     if person and s.get("person"):
         nf = font(34, "bold")
-        d.text((70, 372), s["person"], font=nf, fill=FG)
+        d.text((70, 372), s["person"], font=nf, fill=FG, stroke_width=3, stroke_fill=(0, 0, 0))
 
     hf = font(86 if photo_layout else 92, "title")
     lines = wrap(d, title_text(s["headline"]), hf, W - 140)[: 2 if photo_layout else 3]
@@ -275,28 +275,42 @@ def story_card(s: dict, num: int, page: int, total: int, photo=None) -> Image.Im
     y += 30
     d.rectangle([70, y, 190, y + 10], fill=ACCENT)
     y += 50
-    pf = font(42 if photo_layout else 46, "bold")
-    lh = 58 if photo_layout else 66
-    if s.get("comment"):   # 한줄평 박스 높이를 먼저 계산해 본문이 겹치지 않게
-        _cl = wrap(d, s["comment"], font(38, "black"), W - 60 - 98 - 40)[:2]
-        limit = H - 185 - (78 + len(_cl) * 54) - 24
-    else:
-        limit = H - 190
-    for p in s["points"][:3]:
-        lines = wrap(d, p, pf, W - 200)[: 2 if photo_layout else 3]
+    # ── 한줄평: 글씨 크기를 줄여가며 최대 3줄 안에 전부 들어가게
+    cm = s.get("comment") or ""
+    cmw = W - 60 - 98 - 40
+    c_lines, c_size = [], 38
+    if cm:
+        for c_size in (38, 35, 32, 29):
+            c_lines = wrap(d, cm, font(c_size, "black"), cmw)
+            if len(c_lines) <= (2 if c_size >= 35 else 3):
+                break
+        c_lines = c_lines[:3]
+    c_lh = int(c_size * 1.42)
+    bh = 78 + len(c_lines) * c_lh if cm else 0
+    limit = (H - 185 - bh - 24) if cm else H - 190
+
+    # ── 핵심 사실 3줄: 전부 들어가는 가장 큰 글씨 크기 선택
+    pts = s["points"][:3]
+    sizes = (42, 39, 36, 33) if photo_layout else (46, 42, 39, 36)
+    for psz in sizes:
+        pf = font(psz, "bold")
+        lh = int(psz * 1.38)
+        gap = int(psz * 0.6)
+        wrapped = [wrap(d, p, pf, W - 200)[:2] for p in pts]
+        need = sum(len(w) * lh + gap for w in wrapped)
+        if y + need <= limit:
+            break
+    for lines in wrapped:
         if y + len(lines) * lh > limit:
             break
-        d.ellipse([74, y + 18, 94, y + 38], fill=ACCENT)
+        d.ellipse([74, y + int(lh * 0.3), 94, y + int(lh * 0.3) + 20], fill=ACCENT)
         for line in lines:
             d.text((120, y), line, font=pf, fill=FG, stroke_width=1, stroke_fill=(0, 0, 0))
             y += lh
-        y += 26 if photo_layout else 34
+        y += gap
 
-    if s.get("comment"):
-        # 한줄평 박스: 칩 아래로 최대 2줄
-        cf = font(38, "black")
-        lines = wrap(d, s["comment"], cf, W - 60 - 98 - 40)[:2]
-        bh = 78 + len(lines) * 54
+    if cm:
+        cf = font(c_size, "black")
         by = H - 185 - bh
         d.rounded_rectangle([60, by, W - 60, by + bh], radius=16,
                             fill=tuple(int(c * 0.22 + 20) for c in ACCENT))
@@ -307,9 +321,9 @@ def story_card(s: dict, num: int, page: int, total: int, photo=None) -> Image.Im
         d.rounded_rectangle([96, by + 18, 96 + cw + 26, by + 60], radius=10, fill=ACCENT)
         d.text((109, by + 21), chip, font=chip_f, fill=FG)
         ty = by + 72
-        for ln in lines:
+        for ln in c_lines:
             d.text((98, ty), ln, font=cf, fill=FG)
-            ty += 54
+            ty += c_lh
 
     src = "출처: " + ", ".join(s.get("sources", [])[:4])
     d.text((70, H - 150), src, font=font(28, "regular"), fill=SUB)
