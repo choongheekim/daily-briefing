@@ -49,6 +49,7 @@ jobs:
           FLICKR_API_KEY: ${{ secrets.FLICKR_API_KEY }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
+          command -v ffmpeg >/dev/null || (sudo apt-get update -q && sudo apt-get install -y -q ffmpeg)
           pip install -q -r requirements.txt
           git config user.name "news-bot"
           git config user.email "news-bot@users.noreply.github.com"
@@ -56,7 +57,8 @@ jobs:
           python main.py --channel ${{ matrix.channel }}
 
           # 저장(커밋) → 최신 받아오기 → 올리기 순서
-          git add posts backgrounds
+          git add posts backgrounds ':!posts/**/reel.mp4' ':!posts/**/_reel/**'
+          git add posts/*/*/reel_caption.txt 2>/dev/null || true
           if [ -d photos ]; then git add photos; fi
           if [ -d event_photos ]; then git add event_photos; fi
           git commit -qm "${{ matrix.channel }} post $(TZ=Asia/Seoul date +%F)" || true
@@ -69,3 +71,12 @@ jobs:
             git commit -qm "${{ matrix.channel }} history $(TZ=Asia/Seoul date +%F)"
             git pull -q --rebase -X theirs && git push -q
           fi
+
+      - name: 릴스 영상 미리보기 파일(Actions 실행 화면 아래 Artifacts에서 다운로드)
+        if: ${{ always() && (github.event.inputs.channel == '' || github.event.inputs.channel == 'all' || github.event.inputs.channel == matrix.channel) }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: reel-${{ matrix.channel }}
+          path: posts/${{ matrix.channel }}/*/reel.mp4
+          if-no-files-found: ignore
+          retention-days: 7
