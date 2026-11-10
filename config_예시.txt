@@ -1,0 +1,14 @@
+# 이 파일을 복사해서 이름을 config.txt 로 바꾸고 = 뒤에 값을 넣으세요.
+# config.txt 는 비밀번호와 같습니다. 다른 사람에게 보내거나 올리지 마세요.
+
+ANTHROPIC_API_KEY=
+IMGBB_API_KEY=
+
+IG_ACCESS_TOKEN_RIGHT=
+IG_USER_ID_RIGHT=
+
+IG_ACCESS_TOKEN_LEFT=
+IG_USER_ID_LEFT=
+
+# (선택) 정부 현장 사진
+FLICKR_API_KEY=

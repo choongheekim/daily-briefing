@@ -15,6 +15,14 @@
 3. **카드 생성** — 1080×1350 카드뉴스 7장 (표지 + 이슈 5 + 마무리)
 4. **게시** — Instagram API로 캐러셀 게시, 최근 3일 제목은 중복 회피
 
+## ★ PC에서 돌리기 (GitHub 없이)
+1. https://api.imgbb.com 에서 무료 가입 → API 키 발급 (카드 이미지를 인스타가 가져갈 임시 공개 주소, 1일 후 자동 삭제)
+2. `config_예시.txt`를 복사해 `config.txt`로 이름 변경 → 키·토큰·계정 ID 입력
+3. 테스트: 폴더 주소창에 `cmd` → `pip install -r requirements.txt` → `python run_local.py --dry-run`
+4. 실제 게시: `python run_local.py`
+5. 매일 자동: `python schedule_setup.py 08:30` (윈도우 작업 스케줄러 등록, **PC가 켜져 있어야 실행**)
+6. 결과 기록: `run_log.txt`
+
 ## 1. 인스타그램 계정 준비
 1. 새 인스타 계정 생성 → 설정 → **계정 유형 → 프로페셔널 계정(크리에이터 또는 비즈니스)** 으로 전환
    (개인 계정은 API 게시 불가)
