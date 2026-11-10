@@ -1,1 +1,72 @@
+name: daily-politics-post
 
+on:
+  schedule:
+    - cron: "17 22 * * *"   # 매일 07:17 KST (UTC 22:17)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "true면 이미지만 만들고 게시 안 함"
+        default: "false"
+      channel:
+        description: "right / left / all"
+        default: "all"
+
+permissions:
+  contents: write
+
+concurrency: daily-post
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1          # 같은 repo에 push 하므로 순서대로
+      fail-fast: false         # 한 채널이 실패해도 다른 채널은 진행
+      matrix:
+        include:
+          - channel: right
+            token: IG_ACCESS_TOKEN_RIGHT
+            user: IG_USER_ID_RIGHT
+          - channel: left
+            token: IG_ACCESS_TOKEN_LEFT
+            user: IG_USER_ID_LEFT
+    steps:
+      - uses: actions/checkout@v4
+        if: ${{ github.event.inputs.channel == '' || github.event.inputs.channel == 'all' || github.event.inputs.channel == matrix.channel }}
+
+      - uses: actions/setup-python@v5
+        if: ${{ github.event.inputs.channel == '' || github.event.inputs.channel == 'all' || github.event.inputs.channel == matrix.channel }}
+        with:
+          python-version: "3.12"
+
+      - name: 생성 → push → 게시
+        if: ${{ github.event.inputs.channel == '' || github.event.inputs.channel == 'all' || github.event.inputs.channel == matrix.channel }}
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          IG_ACCESS_TOKEN: ${{ secrets[matrix.token] }}
+          IG_USER_ID: ${{ secrets[matrix.user] }}
+          FLICKR_API_KEY: ${{ secrets.FLICKR_API_KEY }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q fonts-noto-cjk
+          pip install -q -r requirements.txt
+          git config user.name "news-bot"
+          git config user.email "news-bot@users.noreply.github.com"
+
+          python main.py --channel ${{ matrix.channel }}
+
+          git pull -q --rebase
+          git add posts
+          [ -d photos ] && git add photos
+          git add backgrounds
+          [ -d event_photos ] && git add event_photos
+          git commit -qm "${{ matrix.channel }} post $(TZ=Asia/Seoul date +%F)" || true
+          git push -q
+
+          if [ "$DRY_RUN" != "true" ]; then
+            python publish_step.py --channel ${{ matrix.channel }}
+            git add history_${{ matrix.channel }}.json
+            git commit -qm "${{ matrix.channel }} history $(TZ=Asia/Seoul date +%F)"
+            git pull -q --rebase && git push -q
+          fi
