@@ -62,9 +62,13 @@ def build_content(articles: list[dict], channel: dict, n: int = 5,
               f"[한줄평 어조]\n{channel.get('comment_style', '')}\n"
               "세게 쓰되, 특정인의 범죄를 사실처럼 단정하지 말고 의견·반문 형태로 쓴다.\n\n" + RULES)
     msg = anthropic.Anthropic().messages.create(
-        model=MODEL, max_tokens=3000, system=system,
+        model=MODEL, max_tokens=8000, system=system,
         messages=[{"role": "user", "content": PROMPT.format(articles="\n".join(lines), n=n)}])
-    data = _extract_json(msg.content[0].text)
+    # 응답에 '생각(thinking)' 블록이 먼저 올 수 있으므로 텍스트 블록만 모은다
+    text = "".join(getattr(b, "text", "") for b in msg.content if getattr(b, "type", "") == "text")
+    if not text:
+        raise RuntimeError(f"텍스트 응답 없음 (stop_reason={getattr(msg, 'stop_reason', None)})")
+    data = _extract_json(text)
     for s in data["stories"]:
         s["links"] = [articles[i]["link"] for i in s.get("article_ids", [])
                       if isinstance(i, int) and 0 <= i < len(articles)][:2]
