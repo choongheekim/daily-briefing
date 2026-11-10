@@ -56,17 +56,17 @@ jobs:
 
           python main.py --channel ${{ matrix.channel }}
 
-          git pull -q --rebase
-          git add posts
-          [ -d photos ] && git add photos
-          git add backgrounds
-          [ -d event_photos ] && git add event_photos
+          # 저장(커밋) → 최신 받아오기 → 올리기 순서
+          git add posts backgrounds
+          if [ -d photos ]; then git add photos; fi
+          if [ -d event_photos ]; then git add event_photos; fi
           git commit -qm "${{ matrix.channel }} post $(TZ=Asia/Seoul date +%F)" || true
+          git pull -q --rebase -X theirs
           git push -q
 
           if [ "$DRY_RUN" != "true" ]; then
             python publish_step.py --channel ${{ matrix.channel }}
             git add history_${{ matrix.channel }}.json
             git commit -qm "${{ matrix.channel }} history $(TZ=Asia/Seoul date +%F)"
-            git pull -q --rebase && git push -q
+            git pull -q --rebase -X theirs && git push -q
           fi
