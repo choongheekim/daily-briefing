@@ -87,6 +87,33 @@
 `python rerender.py --channel left --date 2026-11-10` → `posts/left/2026-11-10/content.json`을 읽어 인물 사진을 넣어 다시 그립니다.
 윈도우에서는 `오늘카드_사진넣기.bat` 더블클릭(파이썬 3.10+ 필요).
 
+
+## 품질 업그레이드 설정 (선택)
+### 릴스 AI 음성
+- 기본: **무료 음성**(Microsoft Edge 음성, Hyunsu 멀티링구얼). 비용 없음. 목소리를 바꾸려면 Secret/환경변수 `EDGE_VOICE_RIGHT`, `EDGE_VOICE_LEFT` (예: 여성 `ko-KR-SunHiNeural`)
+- 더 자연스러운 유료 음성을 원할 때만 아래 타입캐스트 설정 (월 $15)
+
+#### (선택·유료) 타입캐스트
+1. https://typecast.ai 가입 → **API 요금제(라이트, 월 $15)** 구독 (웹 요금제와 별개)
+2. https://studio.typecast.ai/developers/api 에서 API 키 발급
+3. GitHub Secret **`TYPECAST_API_KEY`** 등록
+4. (선택) 목소리 직접 고르기: PC에서 `python list_voices.py` → 미리듣기 링크로 들어보고
+   마음에 드는 `voice_id`를 Secret **`TYPECAST_VOICE_RIGHT`**, **`TYPECAST_VOICE_LEFT`**에 등록
+   (안 넣으면 중년 남성·뉴스 계열 목소리를 자동 선택, 두 계정은 서로 다른 목소리)
+- 제목은 '톤업', 한줄평은 '화남' 감정으로 읽음. 세기 조절: 환경변수 `TYPECAST_INTENSITY`(기본 1.2), 속도 `TYPECAST_TEMPO`(기본 1.1)
+- 키가 없으면 무료 음성(edge-tts)으로 자동 대체
+
+### 정부 현장 사진 — Flickr
+1. https://www.flickr.com 가입 → https://www.flickr.com/services/apps/create/apply/ → **Apply for a Non-Commercial Key**
+2. 앱 이름·설명 아무거나 입력 → 발급된 **Key**(Secret 말고 Key) 복사
+3. GitHub Secret **`FLICKR_API_KEY`** 등록
+
+### 배경음악
+- 저작권 없는 음원(예: 유튜브 오디오 라이브러리에서 '저작자 표시 필요 없음' 음원)을 `reels_bgm.mp3` 이름으로 저장소 맨 위에 올리면 릴스에 낮은 볼륨으로 깔림
+
+### 문구 작성 방식
+- 1단계 이슈 선정(저렴한 Haiku) → 2단계 **기사 본문을 읽고** 작성 → 3단계 **검수자(Haiku)가 본문과 대조해 수정** — Claude 비용은 기존과 비슷 (실행 로그에 `[검수]`로 고친 내용 표시)
+
 ## 정치인 사진
 - AI가 이슈마다 **중심 인물**을 고르면 봇이 위키데이터에 등록된 그 인물의 대표 사진을 **위키미디어 공용**에서 가져옵니다.
 - 출처만 밝히면 상업적 이용·크롭이 가능한 라이선스(CC0, CC BY, CC BY-SA, 퍼블릭 도메인, 공공누리 1유형)만 받고, 카드 오른쪽 위에 **저작자 / 라이선스**를 자동 표기합니다.
