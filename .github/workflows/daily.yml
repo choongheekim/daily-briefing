@@ -47,6 +47,9 @@ jobs:
           IG_ACCESS_TOKEN: ${{ secrets[matrix.token] }}
           IG_USER_ID: ${{ secrets[matrix.user] }}
           FLICKR_API_KEY: ${{ secrets.FLICKR_API_KEY }}
+          TYPECAST_API_KEY: ${{ secrets.TYPECAST_API_KEY }}
+          TYPECAST_VOICE_RIGHT: ${{ secrets.TYPECAST_VOICE_RIGHT }}
+          TYPECAST_VOICE_LEFT: ${{ secrets.TYPECAST_VOICE_LEFT }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
           command -v ffmpeg >/dev/null || (sudo apt-get update -q && sudo apt-get install -y -q ffmpeg)
