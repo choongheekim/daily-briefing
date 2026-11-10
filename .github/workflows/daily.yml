@@ -49,7 +49,6 @@ jobs:
           FLICKR_API_KEY: ${{ secrets.FLICKR_API_KEY }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
-          sudo apt-get update -q && sudo apt-get install -y -q fonts-noto-cjk
           pip install -q -r requirements.txt
           git config user.name "news-bot"
           git config user.email "news-bot@users.noreply.github.com"
