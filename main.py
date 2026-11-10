@@ -68,6 +68,18 @@ def main():
     with open(f"{out_dir}/content.json", "w", encoding="utf-8") as f:
         json.dump(content, f, ensure_ascii=False, indent=2)
     print(caption)
+
+    if os.getenv("REELS", "1") == "1":
+        try:
+            from bot.reels import build_reel, reel_caption
+            from bot.render import pick_photo
+            build_reel(content, args.channel, out_dir, pick_photo)
+            import shutil
+            shutil.rmtree(f"{out_dir}/_reel", ignore_errors=True)   # 중간 파일 정리
+            with open(f"{out_dir}/reel_caption.txt", "w", encoding="utf-8") as f:
+                f.write(reel_caption(content))
+        except Exception as e:  # 릴스가 실패해도 카드 게시는 진행
+            print(f"[reels] 생성 실패: {e}")
     print(f"[{args.channel}] 이미지 {len(paths)}장 → {out_dir}" + (" (dry-run)" if args.dry_run else ""))
 
 

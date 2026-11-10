@@ -87,3 +87,40 @@ def refresh_token() -> str:
                      timeout=60)
     r.raise_for_status()
     return r.json()["access_token"]
+
+
+def _wait_video(container_id, minutes=10):
+    """릴스는 인스타 쪽 영상 처리에 몇 분 걸림."""
+    for _ in range(minutes * 4):
+        st = _get(container_id, fields="status_code,status").get("status_code")
+        if st in ("FINISHED", "PUBLISHED"):
+            return
+        if st in ("ERROR", "EXPIRED"):
+            info = _get(container_id, fields="status")
+            raise RuntimeError(f"릴스 처리 실패: {info}")
+        time.sleep(15)
+    raise TimeoutError("릴스 처리 시간 초과")
+
+
+def publish_reel(video_path: str, caption: str, public_url: str | None = None) -> str:
+    """① 파일 직접 업로드(resumable) → 실패 시 ② public_url(video_url) 방식."""
+    user = os.getenv("IG_USER_ID") or "me"
+    version = os.getenv("IG_API_VERSION", "v25.0")
+    if not public_url:
+        cid = _post(f"{user}/media", media_type="REELS", upload_type="resumable",
+                    caption=caption, share_to_feed="true")["id"]
+        size = os.path.getsize(video_path)
+        with open(video_path, "rb") as f:
+            r = requests.post(f"https://rupload.facebook.com/ig-api-upload/{version}/{cid}",
+                              headers={"Authorization": f"OAuth {_token()}", "offset": "0",
+                                       "file_size": str(size)},
+                              data=f, timeout=600)
+        if r.status_code != 200 or not r.json().get("success"):
+            raise RuntimeError(f"릴스 업로드 실패 {r.status_code}: {r.text[:300]}")
+    else:
+        cid = _post(f"{user}/media", media_type="REELS", video_url=public_url,
+                    caption=caption, share_to_feed="true")["id"]
+    _wait_video(cid)
+    media_id = _post(f"{user}/media_publish", creation_id=cid)["id"]
+    print(f"[publish] 릴스 게시 완료 media_id={media_id}")
+    return media_id

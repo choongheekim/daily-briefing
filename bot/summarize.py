@@ -37,11 +37,13 @@ photo_queries: 대통령·총리·장관 등 정부 공식 행사와 관련된 �
       "photo_queries": ["한국어 검색어", "English query"],
       "points": ["핵심 사실 1(32자 이내)", "핵심 사실 2(32자 이내)", "핵심 사실 3(32자 이내)"],
       "comment": "계정 시각의 강한 논평(35~55자, 2문장까지. [한줄평 어조] 따를 것. 규칙 4·5 준수)",
+      "reel_comment": "릴스 내레이션용 논평(80~120자, 2~3문장, [릴스 어조] 따를 것. 말하듯 자연스럽게, 규칙 4·5 준수)",
       "sources": ["근거 매체명들"],
       "article_ids": [근거 기사 번호들]
     }}
   ],
   "caption_hook": "캡션 첫 줄(질문형 또는 강한 한 문장, 40자 이내)",
+  "reel_hook": "릴스 첫 화면·첫 내레이션 한 문장(25자 이내, 시청자를 붙잡는 강한 질문이나 외침)",
   "hashtags": ["#태그", "...총 6~9개, 계정 시각에 맞게"]
 }}"""
 
@@ -62,6 +64,7 @@ def build_content(articles: list[dict], channel: dict, n: int = 5,
         lines += [f"- {h}" for h in recent]
     system = (f"너는 인스타그램 정치 카드뉴스 편집자다.\n\n[계정 시각]\n{channel['viewpoint']}\n\n"
               f"[한줄평 어조]\n{channel.get('comment_style', '')}\n"
+              f"[릴스 어조]\n{channel.get('reel_style', channel.get('comment_style', ''))}\n"
               "세게 쓰되, 특정인의 범죄를 사실처럼 단정하지 말고 의견·반문 형태로 쓴다.\n\n" + RULES)
     msg = anthropic.Anthropic().messages.create(
         model=MODEL, max_tokens=8000, system=system,

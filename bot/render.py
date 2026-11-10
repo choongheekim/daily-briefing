@@ -94,6 +94,7 @@ def title_text(t: str) -> str:
     """제목 폰트(검은고딕)에 없는 기호를 비슷한 기호로 바꾸고, 그래도 없는 글자는 제거."""
     global _TCOVER
     t = re.sub(r"(?<=\d)[·ㆍ‧](?=\d)", ".", t)          # 12·3 → 12.3
+    t = re.sub(r"(?<![가-힣])([가-힣])[·ㆍ‧]([가-힣])(?![가-힣])", r"\1\2", t)  # 당·청 → 당청
     t = "".join(TITLE_SUB.get(c, c) for c in t).replace(",  ", ", ")
     if _TCOVER is None:
         try:
@@ -105,10 +106,11 @@ def title_text(t: str) -> str:
 
 
 def sanitize(content: dict) -> dict:
-    for k in ("cover_title",):
-        content[k] = clean_text(content.get(k, ""))
+    for k in ("cover_title", "reel_hook", "caption_hook"):
+        if content.get(k):
+            content[k] = clean_text(content[k])
     for st in content.get("stories", []):
-        for k in ("headline", "comment", "person", "tag"):
+        for k in ("headline", "comment", "reel_comment", "person", "tag"):
             if st.get(k):
                 st[k] = clean_text(st[k])
         st["points"] = [clean_text(p) for p in st.get("points", [])]
@@ -352,24 +354,27 @@ def outro(total: int, photo=None) -> Image.Image:
     return img
 
 
+def pick_photo(person, tag, salt, queries=None):
+    """배경 사진 선택: ① 정부 현장 사진 → ② 인물 사진 → ③ 분야별 장소 → ④ 기본."""
+    from bot.backgrounds import get_background
+    from bot.event_photos import get_event_photo
+    from bot.photos import get_photo
+    e = get_event_photo(queries or [], tag)
+    if e:
+        return (*e, "event")
+    p = get_photo(person)
+    if p:
+        return (*p, "person")
+    b = get_background(tag, salt)
+    return (*b, "scene") if b else None
+
+
 def render_all(content: dict, out_dir: str) -> list[str]:
     os.makedirs(out_dir, exist_ok=True)
     content = sanitize(content)
     stories = content["stories"]
     total = len(stories) + 2
-    from bot.backgrounds import get_background
-    from bot.event_photos import get_event_photo
-    from bot.photos import get_photo
-
-    def pick(person, tag, salt, queries=None):
-        e = get_event_photo(queries or [], tag)      # ① 그날 정부 공식 현장 사진
-        if e:
-            return (*e, "event")
-        p = get_photo(person)                         # ② 인물 사진
-        if p:
-            return (*p, "person")
-        b = get_background(tag, salt)
-        return (*b, "scene") if b else None
+    pick = pick_photo
 
     top_tag = stories[0].get("tag") if stories else None
     top_q = stories[0].get("photo_queries") if stories else None
