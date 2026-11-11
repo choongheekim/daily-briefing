@@ -203,6 +203,15 @@ def put_photo(img, ph, xy, size, shape="rect", r=28, caption=None):
     return d
 
 
+def is_portrait(ph) -> bool:
+    """세로 사진(인물 사진 대부분)은 가로로 긴 띠에 넣으면 얼굴만 크게 잘림 → 동그라미로 넣는다."""
+    try:
+        with Image.open(ph["path"]) as im:
+            return im.height > im.width * 0.95
+    except Exception:
+        return False
+
+
 def sticker(lines, diameter, bg, fg, angle=-12):
     s = Image.new("RGBA", (diameter, diameter), (0, 0, 0, 0))
     d = ImageDraw.Draw(s)
@@ -349,7 +358,7 @@ def profile(c, code, page, total):
     y = 150 + h + 30
     ph = c.get("photo")
     if ph:
-        d = put_photo(img, ph, (M, y), (W - 2 * M, 430))
+        d = put_photo(img, {**ph, "cy": 0.22} if is_portrait(ph) else ph, (M, y), (W - 2 * M, 430))
         y += 430 + 20
     rows = c["rows"]
     rh = (1230 - y) // len(rows)
@@ -369,31 +378,35 @@ def story(c, code, page, total):
     bg, fg, ac, sub = pal
     ph = c.get("photo")
     frame(d, pal, code, page, total, c.get("sources"), ph and ph["credit"])
-    ty = 150
-    if ph:
+    ty, circle = 150, False
+    if ph and is_portrait(ph):                     # 세로 인물 사진 → 오른쪽 위 동그라미
+        circle = True
+        d = put_photo(img, {**ph, "cy": 0.25}, (W - M - 270, 126), (270, 270), "circle")
+    elif ph:
         d = put_photo(img, ph, (M, 132), (W - 2 * M, 380))
         ty = 540
-    h = big_title(d, (M - 4, ty), c["title"], pal, 128 if not ph else 96)
-    y = ty + h + (40 if not ph else 26)
+    h = big_title(d, (M - 4, ty), c["title"], pal, 128 if not ph or circle else 96,
+                  width=W - 2 * M - 300 if circle else W - 2 * M)
+    y = max(ty + h + (40 if not ph or circle else 26), 430 if circle else 0)
     note = c.get("note")
     note_h = 0
     if note:
         nf = PB(33)
         note_h = len(rich_lines(d, note["text"], nf, W - 2 * M - 64)) * int(33 * 1.45) + 96
-    avail = 1225 - note_h - y
-    size = 42
+    avail = 1225 - note_h - 40 - y
+    size = 46 if (not ph or circle) else 42
     while size > 25:
         tot = sum(len(rich_lines(d, p, PM(size), W - 2 * M)) * int(size * 1.5) + 22 for p in c["body"])
         if tot <= avail:
             break
         size -= 1
-    if not ph and tot < avail:                       # 사진 없으면 남는 공간을 위아래로 나눠 가운데 정렬
-        y += (avail - tot) // 2
+    if (not ph or circle) and tot < avail:          # 남는 공간은 제목 아래 조금만(가운데로 띄우지 않음)
+        y += min(60, (avail - tot) // 4)
     for para in c["body"]:
         hh, _ = rich(d, (M, y), para, PM, size, W - 2 * M, fg, ac, gap=1.5)
         y += hh + 22
     if note:
-        ny = 1230 - note_h if ph else min(1230 - note_h, y + 30)
+        ny = min(1230 - note_h, y + 36)
         b_bg, b_lab, b_fg = ST["box_a"]
         d.rounded_rectangle((M, ny, W - M, ny + note_h), 26, fill=b_bg)
         d.text((M + 32, ny + 26), note["label"], font=PX(26), fill=b_lab)
@@ -458,9 +471,12 @@ def debate(c, code, page, total):
     bg, fg, ac, sub = pal
     ph = c.get("photo")
     frame(d, pal, code, page, total, c.get("sources"), ph and ph["credit"])
-    h = big_title(d, (M - 4, 150), c["title"], pal, 128)
-    y = 150 + h + 30
-    if ph:
+    circle = bool(ph) and is_portrait(ph)
+    if circle:
+        d = put_photo(img, {**ph, "cy": 0.25}, (W - M - 230, 126), (230, 230), "circle")
+    h = big_title(d, (M - 4, 150), c["title"], pal, 128, width=W - 2 * M - 260 if circle else W - 2 * M)
+    y = max(150 + h + 30, 386 if circle else 0)
+    if ph and not circle:
         d = put_photo(img, ph, (M, y), (W - 2 * M, 300))
         y += 300 + 28
     hh, _ = rich(d, (M, y), c["lead"], PB, 36 if ph else 40, W - 2 * M, fg, ac, gap=1.5)
