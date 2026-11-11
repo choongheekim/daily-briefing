@@ -6,8 +6,14 @@ name: daily-politics-post
 on:
   schedule:
     - cron: "17 22 * * *"   # 매일 07:17 KST (UTC 22:17)
+  push:                     # 회사 PC가 '추가 게시' 문구(날짜_2 폴더)를 올리면 바로 게시
+    paths:
+      - "posts/*/*_*/content.json"
   workflow_dispatch:
     inputs:
+      post_date:
+        description: "게시할 문구 폴더(예: 2026-11-11_2). 비우면 오늘"
+        default: ""
       dry_run:
         description: "true면 이미지만 만들고 게시 안 함"
         default: "false"
@@ -55,7 +61,19 @@ jobs:
         run: |
           command -v ffmpeg >/dev/null || (sudo apt-get update -q && sudo apt-get install -y -q ffmpeg)
           pip install -q -r requirements.txt
-          echo "DAY=$(TZ=Asia/Seoul date +%F)" >> $GITHUB_ENV
+          TODAY=$(TZ=Asia/Seoul date +%F)
+          CH=${{ matrix.channel }}
+          if [ -n "${{ github.event.inputs.post_date }}" ]; then
+            DAY="${{ github.event.inputs.post_date }}"
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            DAY=$(ls -d posts/$CH/${TODAY}_* 2>/dev/null | sort -V | tail -1 | xargs -r basename)
+            [ -z "$DAY" ] && echo "SKIP=1" >> $GITHUB_ENV
+          else
+            DAY=$TODAY
+          fi
+          echo "DAY=$DAY" >> $GITHUB_ENV
+          echo "POST_DATE=$DAY" >> $GITHUB_ENV
+          echo "게시 대상: $DAY"
 
       - name: 개선 전후 비교 이미지
         if: env.RUN_ME == 'true' && github.event.inputs.compare_date != ''
@@ -79,6 +97,7 @@ jobs:
           git config user.name "news-bot"
           git config user.email "news-bot@users.noreply.github.com"
           CH=${{ matrix.channel }}
+          [ "$SKIP" = "1" ] && { echo "이 채널은 추가 게시 문구 없음"; exit 0; }
 
           set +e
           python main.py --channel $CH --from-saved
