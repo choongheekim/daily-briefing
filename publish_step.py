@@ -42,7 +42,7 @@ if os.getenv("REELS", "1") == "1" and os.path.exists(reel):
         try:
             subprocess.run(["git", "add", "-f", reel], check=True)
             subprocess.run(["git", "commit", "-qm", f"{cid} reel {today}"], check=True)
-            subprocess.run(["git", "pull", "-q", "--rebase", "-X", "theirs"], check=True)
+            subprocess.run(["git", "pull", "-q", "--rebase", "--autostash", "-X", "theirs"], check=True)
             subprocess.run(["git", "push", "-q"], check=True)
             url = f"https://raw.githubusercontent.com/{repo}/{branch}/{reel}"
             wait_url(url)

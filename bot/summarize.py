@@ -93,12 +93,34 @@ def _extract_json(text: str) -> dict:
     return json.loads(m.group(0))
 
 
+# 1M 토큰당 달러 (입력, 출력)
+PRICE = {"haiku": (0.10, 0.50), "sonnet": (2.0, 10.0), "opus": (4.0, 20.0)}
+USD_KRW = 1450
+COST = {"usd": 0.0}
+
+
+def _log_cost(msg):
+    u = getattr(msg, "usage", None)
+    if not u:
+        return
+    pin, pout = next((v for k, v in PRICE.items() if k in msg.model), PRICE["sonnet"])
+    usd = u.input_tokens / 1e6 * pin + u.output_tokens / 1e6 * pout
+    COST["usd"] += usd
+    print(f"[비용] {msg.model} 입력 {u.input_tokens:,} / 출력 {u.output_tokens:,} 토큰 "
+          f"≈ {usd * USD_KRW:.0f}원 (누적 {COST['usd'] * USD_KRW:.0f}원)")
+
+
 def _ask(system: str, user: str, max_tokens: int = 8000, model: str | None = None) -> dict:
     client = anthropic.Anthropic()
     for attempt in range(3):
         try:
-            msg = client.messages.create(model=model or MODEL, max_tokens=max_tokens, system=system,
-                                         messages=[{"role": "user", "content": user}])
+            kw = dict(model=model or MODEL, max_tokens=max_tokens, system=system,
+                      messages=[{"role": "user", "content": user}])
+            try:   # '생각' 토큰은 출력 요금으로 청구되므로 끈다
+                msg = client.messages.create(thinking={"type": "disabled"}, **kw)
+            except anthropic.BadRequestError:
+                msg = client.messages.create(**kw)
+            _log_cost(msg)
             # 응답에 '생각(thinking)' 블록이 먼저 올 수 있으므로 텍스트 블록만 모은다
             text = "".join(getattr(b, "text", "") for b in msg.content if getattr(b, "type", "") == "text")
             if not text:
@@ -110,7 +132,7 @@ def _ask(system: str, user: str, max_tokens: int = 8000, model: str | None = Non
     raise RuntimeError("Claude 응답을 3번 연속 해석하지 못함")
 
 
-def fetch_body(url: str, limit: int = 1800) -> str:
+def fetch_body(url: str, limit: int = 1200) -> str:
     """기사 본문 추출(실패하면 빈 문자열)."""
     try:
         import requests
@@ -141,7 +163,7 @@ def build_content(articles: list[dict], channel: dict, n: int = 5,
     # 2) 본문 수집
     blocks, issue_meta = [], []
     for k, st in enumerate(picked, 1):
-        ids = [i for i in st.get("article_ids", []) if isinstance(i, int) and 0 <= i < len(articles)][:3]
+        ids = [i for i in st.get("article_ids", []) if isinstance(i, int) and 0 <= i < len(articles)][:2]
         parts = []
         for i in ids:
             a = articles[i]

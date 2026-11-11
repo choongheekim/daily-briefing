@@ -42,6 +42,7 @@ def main():
     ap.add_argument("--channel", required=True, choices=["right", "left"])
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
+    args.dry_run = args.dry_run or os.getenv("DRY_RUN") == "true"
 
     ch = load_channel(args.channel)
     if os.getenv("IG_HANDLE"):
@@ -55,11 +56,16 @@ def main():
     history = json.load(open(hp, encoding="utf-8")) if os.path.exists(hp) else []
     recent = [h for d in history[-3:] for h in d["headlines"]]
 
-    articles = fetch_articles(ch["feeds"])
-    if len(articles) < 10:
-        raise SystemExit(f"기사가 너무 적음({len(articles)}건) — 중단")
-
-    content = build_content(articles, ch, n=int(os.getenv("STORY_COUNT", "5")), recent=recent)
+    saved = f"{out_dir}/content.json"
+    if args.dry_run and os.path.exists(saved) and os.getenv("FRESH") != "1":
+        # 테스트 실행: 오늘 이미 만든 문구를 재사용 → Claude 요금 0원
+        print("[테스트] 오늘 만든 문구 재사용(Claude 호출 안 함)")
+        content = json.load(open(saved, encoding="utf-8"))
+    else:
+        articles = fetch_articles(ch["feeds"])
+        if len(articles) < 10:
+            raise SystemExit(f"기사가 너무 적음({len(articles)}건) — 중단")
+        content = build_content(articles, ch, n=int(os.getenv("STORY_COUNT", "5")), recent=recent)
     content = sanitize(content)   # 캡션도 같은 표기로
     paths = render_all(content, out_dir)
     caption = make_caption(content)
