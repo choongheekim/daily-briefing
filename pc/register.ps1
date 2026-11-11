@@ -3,7 +3,14 @@ $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [Text.Encoding]::UTF8
 $Repo = Join-Path $env:USERPROFILE 'daily-briefing'
 if (-not (Test-Path (Join-Path $Repo 'pc\write.py'))) { Write-Host "저장소가 없어요. 먼저 점검.bat 을 실행하세요."; exit 1 }
-$py = (Get-Command python).Source
+$py = $null
+foreach ($c in 'py', 'python') {
+  if (-not $py -and (Get-Command $c -ErrorAction SilentlyContinue)) {
+    $p = & $c -c "import sys;print(sys.executable)" 2>$null | Select-Object -Last 1
+    if ($LASTEXITCODE -eq 0 -and $p -and (Test-Path $p)) { $py = $p.Trim() }
+  }
+}
+if (-not $py) { Write-Host "python을 찾지 못했어요. 점검.bat 결과를 확인하세요."; exit 1 }
 $pyw = Join-Path (Split-Path $py) 'pythonw.exe'
 if (Test-Path $pyw) { $py = $pyw }      # 검은 창 안 뜨게
 $name = 'daily-briefing-문구작성'

@@ -23,11 +23,17 @@ $claude = Get-Command claude -ErrorAction SilentlyContinue
 if ($claude) { Ok "claude: $($claude.Source)  ($(& claude --version 2>$null))" } else { Bad "claude 명령 없음 → Claude Code 설치/PATH 확인" }
 $git = Get-Command git -ErrorAction SilentlyContinue
 if ($git) { Ok "git: $(& git --version)" } else { Bad "git 없음 → https://git-scm.com 에서 설치" }
-$py = Get-Command python -ErrorAction SilentlyContinue
-if ($py -and $py.Source -notmatch 'WindowsApps') { Ok "python: $($py.Source)  ($(& python --version 2>&1))" }
-elseif ($py) { Bad "python이 '스토어 바로가기'(WindowsApps)만 있음 → python.org 에서 설치(PATH 추가 체크)" }
-else { Bad "python 없음 → python.org 에서 설치(설치 화면에서 'Add python.exe to PATH' 체크)" }
-
+# 새 'Python 설치 관리자'는 python/py 명령을 WindowsApps 별칭으로 둔다 → 실제 실행 파일 경로를 직접 확인
+$PyExe = $null
+foreach ($c in 'py', 'python') {
+  if (Get-Command $c -ErrorAction SilentlyContinue) {
+    $p = & $c -c "import sys;print(sys.executable)" 2>$null | Select-Object -Last 1
+    if ($LASTEXITCODE -eq 0 -and $p -and (Test-Path $p)) { $PyExe = $p.Trim(); break }
+  }
+}
+if ($PyExe) { Ok "python: $PyExe  ($(& $PyExe --version 2>&1))" }
+else { Bad "python 실행 안 됨 → 명령 프롬프트에서 'py install default' 실행 후 다시 점검(그래도 안 되면 화면 보여주세요)" }
+$py = $PyExe
 # 2) API 요금 위험 변수
 Say ""
 Say "2. API 요금이 나갈 수 있는 환경변수"
@@ -78,10 +84,10 @@ if ($git) {
 Say ""
 Say "5. 파이썬 패키지 / 뉴스 사이트 접속"
 if ($py -and (Test-Path (Join-Path $Repo 'requirements.txt'))) {
-  & python -m pip install -q --disable-pip-version-check -r (Join-Path $Repo 'requirements.txt') 2>&1 | Out-Null
+  & $PyExe -m pip install -q --disable-pip-version-check -r (Join-Path $Repo 'requirements.txt') 2>&1 | Out-Null
   if ($LASTEXITCODE -eq 0) { Ok "패키지 설치 완료" } else { Bad "pip 설치 실패(회사망이 pypi.org를 막는지 확인)" }
   Push-Location $Repo
-  $probe = & python -c "from bot.news import fetch_articles; import json; a=fetch_articles(json.load(open('channels/right.json',encoding='utf-8'))['feeds']); print(len(a))" 2>&1 | Select-Object -Last 1
+  $probe = & $PyExe -c "from bot.news import fetch_articles; import json; a=fetch_articles(json.load(open('channels/right.json',encoding='utf-8'))['feeds']); print(len(a))" 2>&1 | Select-Object -Last 1
   Pop-Location
   if ("$probe" -match '^\d+$' -and [int]$probe -ge 10) { Ok "뉴스 RSS 수집 정상 ($probe건)" } else { Bad "뉴스 RSS 수집 실패: $probe" }
 }
@@ -100,7 +106,7 @@ Remove-Item Env:ANTHROPIC_API_KEY -ErrorAction SilentlyContinue
 `$o = @()
 `$o += 'claude=' + [bool](Get-Command claude -ErrorAction SilentlyContinue)
 `$o += 'git=' + [bool](Get-Command git -ErrorAction SilentlyContinue)
-`$o += 'python=' + (& python --version 2>&1)
+`$o += 'python=' + (& '$PyExe' --version 2>&1)
 Set-Location `$env:TEMP
 `$r = 'Reply with exactly: OK' | & claude -p --model haiku --output-format json --no-session-persistence 2>&1 | Out-String
 try { `$j = `$r | ConvertFrom-Json; `$o += 'claude_p=' + `$j.result } catch { `$o += 'claude_p_fail=' + `$r.Trim() }

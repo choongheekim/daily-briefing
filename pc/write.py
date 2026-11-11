@@ -69,11 +69,18 @@ def notify(text):
 def main():
     os.chdir(REPO)
     sys.path.insert(0, REPO)
-    log(f"=== 문구 작성 시작 {TODAY} ===")
     run("git", "pull", "-q", "--rebase", "--autostash")
+    key = TODAY
+    if "--extra" in sys.argv:   # 오늘 추가 게시: 2026-11-11_2, _3 … (올리면 GitHub이 바로 게시)
+        n = 2
+        while os.path.exists(f"posts/right/{TODAY}_{n}") or os.path.exists(f"posts/left/{TODAY}_{n}"):
+            n += 1
+        key = f"{TODAY}_{n}"
+    os.environ["POST_DATE"] = key
+    log(f"=== 문구 작성 시작 {key} ===")
     done, failed = [], []
     for cid in ("right", "left"):
-        path = f"posts/{cid}/{TODAY}/content.json"
+        path = f"posts/{cid}/{key}/content.json"
         if os.path.exists(path):
             log(f"[{cid}] 이미 있음 → 건너뜀")
             done.append(cid)
@@ -90,8 +97,8 @@ def main():
         else:
             failed.append(cid)
     if done:
-        run("git", "add", *[f"posts/{c}/{TODAY}/content.json" for c in done])
-        run("git", "commit", "-qm", f"문구 {TODAY} (PC)", check=False)
+        run("git", "add", *[f"posts/{c}/{key}/content.json" for c in done])
+        run("git", "commit", "-qm", f"문구 {key} (PC)", check=False)
         for attempt in range(3):
             run("git", "pull", "-q", "--rebase", "--autostash", "-X", "theirs", check=False)
             if run("git", "push", "-q", check=False).returncode == 0:
@@ -100,7 +107,7 @@ def main():
         else:
             raise RuntimeError("GitHub에 올리기(push) 3번 실패")
     if failed:
-        notify(f"⚠️ 회사 PC 문구 작성 실패: {', '.join(failed)} ({TODAY}). 로그: {LOG_DIR}")
+        notify(f"⚠️ 회사 PC 문구 작성 실패: {', '.join(failed)} ({key}). 로그: {LOG_DIR}")
     log(f"=== 끝: 성공 {done}, 실패 {failed} ===")
     return 0 if not failed else 1
 
