@@ -1,0 +1,154 @@
+{
+  "cover_title": "계엄 2주년, 사과 검토 없는 국힘",
+  "cover_person": "장동혁",
+  "reel_hook": "계엄 2주년, 사과 검토는 없는 겁니까?",
+  "stories": [
+    {
+      "issue_no": 1,
+      "tag": "야당",
+      "headline": "국힘 '계엄 사과 검토 없다'",
+      "person": "박충권",
+      "photo_queries": [],
+      "scene": "empty microphone podium",
+      "points": [
+        "윤상현 \"계엄 사과·통렬한 반성 필요\" 주장",
+        "이진숙 \"기념일처럼 사과할 필요 없다\"",
+        "박충권 \"사과 따로 검토된 것 없다\""
+      ],
+      "comment": "사과는 기념일 행사가 아니라 책임의 출발점이다. 장외투쟁에 쏟는 힘을 반성에 쓰면 안 되나.",
+      "reel_comment": "계엄 2주년을 앞두고 사과 검토는 없다고요? 사과가 기념일 행사입니까! 반성은 미루면서 주말마다 장외투쟁에는 나섭니다. 내란 청산, 끝까지 책임을 물어야 합니다!",
+      "sources": [
+        "한겨레",
+        "연합뉴스"
+      ],
+      "links": [
+        "https://www.hani.co.kr/arti/politics/politics_general/1286615.html",
+        "https://www.yna.co.kr/view/AKR20261111091000001"
+      ]
+    },
+    {
+      "issue_no": 2,
+      "tag": "사법",
+      "headline": "이용철 '공소취소, 진상규명 먼저'",
+      "person": "이용철",
+      "photo_queries": [
+        "Minister of Justice",
+        "President Lee Jae-myung"
+      ],
+      "scene": "judge gavel desk",
+      "points": [
+        "공소취소 질문에 \"진상 규명 집중\" 답변",
+        "\"공소 취소 모임 멤버 아니다\" 해명",
+        "박충권 \"공소 취소 길 터주나\" 비판"
+      ],
+      "comment": "사법개혁은 신뢰 회복이어야 한다. 공소취소 논란엔 분명히 선을 그어야 하지 않나.",
+      "reel_comment": "공소취소를 묻는데 진상규명이 먼저라는 답만 돌아옵니다. 사법개혁이 특정인의 사건 처리 수단이어도 됩니까? 개혁 후퇴는 배신입니다. 분명히 답하십시오!",
+      "sources": [
+        "연합뉴스"
+      ],
+      "links": [
+        "https://www.khan.co.kr/article/202611111041001/?utm_source=khan_rss&utm_medium=rss&utm_campaign=politic_news",
+        "https://www.yna.co.kr/view/AKR20261111031153004"
+      ]
+    },
+    {
+      "issue_no": 3,
+      "tag": "선거",
+      "headline": "장동혁, 용인갑 경선 부실 역풍",
+      "person": "장동혁",
+      "photo_queries": [],
+      "scene": "ballot box voting",
+      "points": [
+        "ARS 4298건 중 2639건 차단 나타나",
+        "당 발표 미수신 책임당원은 44명",
+        "우재준·양향자, 경선에도 공정 원칙 촉구"
+      ],
+      "comment": "공정을 외치던 대표의 당 경선이 부실이라니. 남의 선거 따지기 전에 내 집부터 보라.",
+      "reel_comment": "공정한 선거를 그렇게 외치더니 당 경선에서는 전화 61.4%가 차단됐다는 조사가 나왔습니다. 남의 선거엔 특검을 외치면서 내 집 문제는 줄여 말하는 겁니까? 국민이 우습습니까!",
+      "sources": [
+        "오마이뉴스"
+      ],
+      "links": [
+        "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003283903",
+        "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003283806"
+      ]
+    },
+    {
+      "issue_no": 4,
+      "tag": "부동산",
+      "headline": "민주당 종부세 완화 건의 논란",
+      "person": null,
+      "photo_queries": [],
+      "scene": "apartment buildings aerial",
+      "points": [
+        "서울 의원들, 공제액 14억 통일 건의",
+        "정부안은 비거주 1주택 12억 유지",
+        "진보정당·시민단체 \"조세 정의 포기\" 비판"
+      ],
+      "comment": "강남 3구 감세에 표가 따라올까. 개혁 후퇴는 배신이고 종부세는 지켜야 한다.",
+      "reel_comment": "종부세 기본공제를 14억으로 통일하자는 건의가 나왔습니다. 강남 3구에 혜택이 몰린다는 비판이 나오는데, 이게 서민을 위한 개혁입니까! 개혁 후퇴는 배신입니다. 조세정의, 끝까지 지켜야 합니다!",
+      "sources": [
+        "한겨레",
+        "오마이뉴스"
+      ],
+      "links": [
+        "https://www.hani.co.kr/arti/politics/assembly/1286659.html",
+        "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003283720"
+      ]
+    },
+    {
+      "issue_no": 5,
+      "tag": "여당",
+      "headline": "최민희, 기자들에 '하이에나 떼'",
+      "person": "최민희",
+      "photo_queries": [],
+      "scene": "press cameras lenses",
+      "points": [
+        "5일 당원방에 기자 사진 올리며 \"하이에나 떼들\"",
+        "11일 \"표현 과했다\" 페이스북 사과",
+        "사진기자협회 \"명백한 모욕\", 철회 요구"
+      ],
+      "comment": "언론 비판은 자유지만 조롱은 다르다. 유출 뒤 다섯 줄 사과로 충분한가.",
+      "reel_comment": "기자들을 하이에나 떼라 부르고, 유출되니 다섯 줄 사과입니까? 언론 비판은 자유지만 조롱은 다릅니다. 우리 편이라도 잘못은 잘못입니다. 권력 감시는 누구에게나 똑같아야 합니다.",
+      "sources": [
+        "오마이뉴스",
+        "경향신문"
+      ],
+      "links": [
+        "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003283912",
+        "https://www.khan.co.kr/article/202611111059001/?utm_source=khan_rss&utm_medium=rss&utm_campaign=politic_news"
+      ]
+    }
+  ],
+  "caption_hook": "계엄 2주년, 사과 검토조차 없다니 그렇게 어렵습니까?",
+  "hashtags": [
+    "#진보",
+    "#정치뉴스",
+    "#오늘의정치",
+    "#내란청산",
+    "#국민의힘",
+    "#계엄2주년",
+    "#사법개혁",
+    "#종부세",
+    "#개혁후퇴는배신",
+    "#정치카드뉴스",
+    "#기득권견제"
+  ],
+  "review_notes": [
+    "cover_title·reel_hook: 장동혁 대표가 작년 계엄 1주년에 사과한 사실이 본문에 있어 '사과 없는 국힘'은 사실과 맞지 않아 '사과 검토 없음'으로 고침",
+    "stories[0] headline·points: 박충권 발언을 '검토 없다'로 정확히 옮기고, 이진숙 발언은 기사 취지에 맞게 자기 말로 요약함",
+    "stories[0] reel_comment: '계엄 2주년이 코앞' 표현을 '앞두고'로 바꿔 날짜 표현을 완화함",
+    "stories[1] points: 국힘 공세의 발언자를 박충권으로 명시함",
+    "stories[1] comment·reel_comment: '방탄', '특정인 사건을 덮는 일' 등 의혹을 단정하는 표현을 질문·반문 형태로 바꾸고 comment 글자 수를 줄임",
+    "stories[1] sources: 본문에서 사용하지 않은 경향신문 출처 제거",
+    "stories[2] points: '차단 확인'을 기사 표현인 '나타나'로 바꿔 조사 결과임을 명시함",
+    "stories[2] reel_comment: 61%를 기사 수치인 61.4%로 맞추고 '조사 결과'임을 표시함",
+    "stories[2] comment: '대표 당'을 '대표의 당'으로 고치고 글자 수 제한에 맞게 줄임",
+    "stories[3] points: 진보 진영 비판의 표현을 '조세 정의 포기'로 본문에 맞춤",
+    "stories[3] comment·reel_comment: 종부세 완화가 확정된 것처럼 읽히지 않도록 '건의'로 표기하고 '강남 3구 혜택' 비판의 주체를 명시함",
+    "stories[3] person: 서울 의원들의 집단 건의이므로 특정인을 주인공으로 지정하지 않고 null 유지",
+    "stories[4] points: '비하' 평가를 발언 원문('하이에나 떼들')으로 대체해 사실 문장에서 의견을 뺌",
+    "stories[4] comment: '유출되고서야'를 '유출 뒤'로 바꿔 과장 표현 제거",
+    "전체: 한자 약칭 없음, 직함 규칙 준수 확인, 멸칭·혐오·음모론 표현 없음 확인, 글자 수 제한 준수 확인"
+  ]
+}
