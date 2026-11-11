@@ -69,6 +69,8 @@ def notify(text):
 def main():
     os.chdir(REPO)
     sys.path.insert(0, REPO)
+    run("git", "config", "user.name", "news-bot-pc")          # 이 저장소에서만 쓰는 커밋 이름
+    run("git", "config", "user.email", "news-bot-pc@users.noreply.github.com")
     run("git", "pull", "-q", "--rebase", "--autostash")
     key = TODAY
     if "--extra" in sys.argv:   # 오늘 추가 게시: 2026-11-11_2, _3 … (올리면 GitHub이 바로 게시)
@@ -98,7 +100,9 @@ def main():
             failed.append(cid)
     if done:
         run("git", "add", *[f"posts/{c}/{key}/content.json" for c in done])
-        run("git", "commit", "-qm", f"문구 {key} (PC)", check=False)
+        c = run("git", "commit", "-qm", f"문구 {key} (PC)", check=False)
+        if c.returncode and "nothing to commit" not in (c.stdout + c.stderr):
+            raise RuntimeError("커밋 실패(위 로그 확인)")
         for attempt in range(3):
             run("git", "pull", "-q", "--rebase", "--autostash", "-X", "theirs", check=False)
             if run("git", "push", "-q", check=False).returncode == 0:
