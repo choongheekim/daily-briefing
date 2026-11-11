@@ -427,8 +427,11 @@ def pick_photo(person, tag, salt, queries=None, scene=None):
     출처 문구에 라이선스가 없는 사진은 쓰지 않는다."""
     from bot.backgrounds import get_background
     from bot.event_photos import get_event_photo
-    from bot.pexels import get_scene
+    from bot import openverse, pexels
     from bot.photos import get_photo, license_ok
+
+    def get_scene(q):   # Pexels 키가 있으면 Pexels, 없으면 Openverse(무료·키 불필요)
+        return (pexels.get_scene(q) if os.getenv("PEXELS_API_KEY") else None) or openverse.get_scene(q)
     e = get_event_photo(queries or [], tag)
     if e and license_ok(e[1]):
         return (*e, "event")
