@@ -1,5 +1,8 @@
 name: daily-politics-post
 
+# 문구는 회사 PC(Claude Code 구독)가 06:40에 써서 올린다 → 여기서는 Claude를 부르지 않는다.
+# 여기서 하는 일: 저장된 문구(content.json)로 카드·릴스 만들기 → 인스타 게시.
+
 on:
   schedule:
     - cron: "17 22 * * *"   # 매일 07:17 KST (UTC 22:17)
@@ -11,6 +14,9 @@ on:
       channel:
         description: "right / left / all"
         default: "all"
+      compare_date:
+        description: "개선 전후 비교 이미지를 만들 날짜(예: 2026-11-11). 비우면 안 만듦"
+        default: ""
 
 permissions:
   contents: write
@@ -31,55 +37,92 @@ jobs:
           - channel: left
             token: IG_ACCESS_TOKEN_LEFT
             user: IG_USER_ID_LEFT
+    env:
+      RUN_ME: ${{ github.event.inputs.channel == '' || github.event.inputs.channel == 'all' || github.event.inputs.channel == matrix.channel }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
     steps:
       - uses: actions/checkout@v4
-        if: ${{ github.event.inputs.channel == '' || github.event.inputs.channel == 'all' || github.event.inputs.channel == matrix.channel }}
+        if: env.RUN_ME == 'true'
 
       - uses: actions/setup-python@v5
-        if: ${{ github.event.inputs.channel == '' || github.event.inputs.channel == 'all' || github.event.inputs.channel == matrix.channel }}
+        if: env.RUN_ME == 'true'
         with:
           python-version: "3.12"
 
-      - name: 생성 → push → 게시
-        if: ${{ github.event.inputs.channel == '' || github.event.inputs.channel == 'all' || github.event.inputs.channel == matrix.channel }}
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          IG_ACCESS_TOKEN: ${{ secrets[matrix.token] }}
-          IG_USER_ID: ${{ secrets[matrix.user] }}
-          FLICKR_API_KEY: ${{ secrets.FLICKR_API_KEY }}
-          TYPECAST_API_KEY: ${{ secrets.TYPECAST_API_KEY }}
-          TYPECAST_VOICE_RIGHT: ${{ secrets.TYPECAST_VOICE_RIGHT }}
-          TYPECAST_VOICE_LEFT: ${{ secrets.TYPECAST_VOICE_LEFT }}
-          DRY_RUN: ${{ github.event.inputs.dry_run }}
+      - name: 준비(프로그램 설치)
+        if: env.RUN_ME == 'true'
         run: |
           command -v ffmpeg >/dev/null || (sudo apt-get update -q && sudo apt-get install -y -q ffmpeg)
           pip install -q -r requirements.txt
+          echo "DAY=$(TZ=Asia/Seoul date +%F)" >> $GITHUB_ENV
+
+      - name: 개선 전후 비교 이미지
+        if: env.RUN_ME == 'true' && github.event.inputs.compare_date != ''
+        env:
+          FLICKR_API_KEY: ${{ secrets.FLICKR_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+        run: python compare.py --channel ${{ matrix.channel }} --date ${{ github.event.inputs.compare_date }}
+
+      - name: 카드·릴스 만들기 → 게시
+        if: env.RUN_ME == 'true'
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets[matrix.token] }}
+          IG_USER_ID: ${{ secrets[matrix.user] }}
+          FLICKR_API_KEY: ${{ secrets.FLICKR_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          # 전환 기간 안전장치: PC 문구가 없을 때만 API로 대신 작성. Secret을 지우면 API 요금 0원 확정
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
           git config user.name "news-bot"
           git config user.email "news-bot@users.noreply.github.com"
+          CH=${{ matrix.channel }}
 
-          python main.py --channel ${{ matrix.channel }}
+          set +e
+          python main.py --channel $CH --from-saved
+          code=$?
+          if [ "$code" = "3" ] && [ -n "$ANTHROPIC_API_KEY" ]; then
+            python notify.py "⚠️ [$CH] 회사 PC 문구가 없어 API로 대신 작성합니다(요금 발생). PC 06:40 작업을 확인해 주세요."
+            python main.py --channel $CH
+            code=$?
+          elif [ "$code" = "3" ]; then
+            python notify.py "⚠️ [$CH] 오늘($DAY) 문구가 안 올라와서 게시를 건너뜀. 회사 PC(06:40 작업)를 확인해 주세요."
+            exit 0
+          fi
+          set -e
+          [ "$code" = "0" ] || exit $code
 
-          # 저장(커밋) → 최신 받아오기 → 올리기 순서
-          git add posts backgrounds ':!posts/**/reel.mp4' ':!posts/**/_reel/**'
-          git add posts/*/*/reel_caption.txt 2>/dev/null || true
-          if [ -d photos ]; then git add photos; fi
-          if [ -d event_photos ]; then git add event_photos; fi
-          git commit -qm "${{ matrix.channel }} post $(TZ=Asia/Seoul date +%F)" || true
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "dry_run → 게시·저장 안 함 (아래 Artifacts에서 카드·릴스 확인)"
+            exit 0
+          fi
+
+          python media_push.py --channel $CH
+          git add posts/$CH/$DAY/*.json posts/$CH/$DAY/*.txt
+          [ -d photos ] && git add photos
+          git commit -qm "$CH post $DAY" || true
           git pull -q --rebase --autostash -X theirs
           git push -q
 
-          if [ "$DRY_RUN" != "true" ]; then
-            python publish_step.py --channel ${{ matrix.channel }}
-            git add history_${{ matrix.channel }}.json
-            git commit -qm "${{ matrix.channel }} history $(TZ=Asia/Seoul date +%F)"
-            git pull -q --rebase --autostash -X theirs && git push -q
-          fi
+          python publish_step.py --channel $CH
+          git add history_$CH.json
+          git commit -qm "$CH history $DAY" || true
+          git pull -q --rebase --autostash -X theirs && git push -q
 
-      - name: 릴스 영상 미리보기 파일(Actions 실행 화면 아래 Artifacts에서 다운로드)
-        if: ${{ always() && (github.event.inputs.channel == '' || github.event.inputs.channel == 'all' || github.event.inputs.channel == matrix.channel) }}
+      - name: 실패 알림
+        if: failure() && env.RUN_ME == 'true'
+        run: python notify.py "❌ [${{ matrix.channel }}] 인스타 게시 실패. GitHub Actions 기록을 확인해 주세요." || true
+
+      - name: 미리보기 파일(Actions 실행 화면 아래 Artifacts에서 다운로드)
+        if: always() && env.RUN_ME == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: reel-${{ matrix.channel }}
-          path: posts/${{ matrix.channel }}/*/reel.mp4
+          name: preview-${{ matrix.channel }}
+          path: |
+            posts/${{ matrix.channel }}/${{ env.DAY }}/*.jpg
+            posts/${{ matrix.channel }}/${{ env.DAY }}/reel.mp4
+            compare/
           if-no-files-found: ignore
           retention-days: 7
