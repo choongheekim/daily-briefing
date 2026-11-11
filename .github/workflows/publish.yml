@@ -1,0 +1,75 @@
+name: politics-publish
+
+# 회사 PC(Claude Code 구독)가 queue/<채널>/<id>/ 에 카드를 올려 두면, 게시 시간에 여기서 인스타에 올린다.
+# Claude 호출 없음 → 요금 0원. 아침(07:17) 게시물은 같은 카드로 릴스도 만들어 올린다.
+
+on:
+  schedule:
+    - cron: "17 22 * * *"   # 07:17 KST
+    - cron: "32 3 * * *"    # 12:32 KST
+    - cron: "32 9 * * *"    # 18:32 KST
+    - cron: "47 * * * *"    # 놓친 게시물 보충(대기열이 없으면 아무것도 안 함)
+  push:                     # PC가 '지금 게시' 문구를 올리면 바로 확인
+    paths:
+      - "queue/**/meta.json"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "true면 게시하지 않고 확인만(릴스는 미리보기로 만듦)"
+        default: "false"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: politics-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      fail-fast: false
+      matrix:
+        include:
+          - channel: right
+            token: IG_ACCESS_TOKEN_RIGHT
+            user: IG_USER_ID_RIGHT
+          - channel: left
+            token: IG_ACCESS_TOKEN_LEFT
+            user: IG_USER_ID_LEFT
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 준비
+        run: |
+          command -v ffmpeg >/dev/null || (sudo apt-get update -q && sudo apt-get install -y -q ffmpeg)
+          pip install -q requests pillow edge-tts
+      - id: pub
+        name: 게시
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets[matrix.token] }}
+          IG_USER_ID: ${{ secrets[matrix.user] }}
+          GH_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+        run: python publish_queue.py --channel ${{ matrix.channel }}
+      - name: 게시 기록 저장
+        if: steps.pub.outputs.changed == 'true'
+        run: |
+          git config user.name "news-bot"
+          git config user.email "news-bot@users.noreply.github.com"
+          git add -A queue
+          git commit -qm "published ${{ matrix.channel }} $(date -u +%F_%H%M)" || exit 0
+          git pull -q --rebase --autostash -X theirs || true
+          git push -q
+      - name: 릴스 미리보기(Actions 실행 화면 아래 Artifacts)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reel-${{ matrix.channel }}
+          path: preview/
+          if-no-files-found: ignore
+          retention-days: 7
