@@ -41,6 +41,12 @@ def _api(url, params, tries=5):
 
 # 출처표시만 하면 상업적 이용·변형(크롭) 가능한 라이선스만 허용
 ALLOWED = re.compile(r"^(CC0|CC BY(-SA)? [0-9.]+|Public domain|PD|KOGL Type 1|공공누리 제?1유형)", re.I)
+# 카드에 쓰기 전 출처 문구에 '확인된 라이선스'가 있는지 검사(없으면 그 사진은 안 씀)
+LICENSE_IN_CREDIT = re.compile(r"(CC0|CC BY(-SA)? ?[0-9.]*|Public domain|KOGL Type 1|공공누리 ?제?1유형|Pexels)", re.I)
+
+
+def license_ok(credit: str | None) -> bool:
+    return bool(credit) and bool(LICENSE_IN_CREDIT.search(credit))
 POLITICAL = ("정치인", "국회의원", "대통령", "장관", "총리", "시장", "도지사", "법조인",
              "관료", "외교관", "검사", "판사", "군인", "정당인", "의원")
 POLITICIAN_QID = "Q82955"
@@ -93,10 +99,18 @@ def _wikidata_image(name: str) -> str | None:
     return None
 
 
+def _img_url(info: dict) -> str:
+    """위키미디어는 표준 크기(…960/1280/1920/3840px)만 허용(그 외는 429 차단).
+    원본이 1920px 이하면 원본, 크면 1920px 표준 썸네일."""
+    if info.get("width", 0) <= 1920 or not info.get("thumburl"):
+        return info["url"]
+    return info["thumburl"].split("?")[0]
+
+
 def _commons_fetch(filename: str, dest: str) -> str | None:
     res = _api("https://commons.wikimedia.org/w/api.php", {
         "action": "query", "titles": f"File:{filename}", "prop": "imageinfo",
-        "iiprop": "url|extmetadata", "iiurlwidth": 1200})
+        "iiprop": "url|extmetadata|size", "iiurlwidth": 1920})
     page = next(iter(res["query"]["pages"].values()))
     info = page["imageinfo"][0]
     meta = info.get("extmetadata", {})
@@ -105,7 +119,7 @@ def _commons_fetch(filename: str, dest: str) -> str | None:
         print(f"[photos] 라이선스 제외: {filename} ({lic})")
         return None
     artist = re.sub(r"<[^>]+>", "", html.unescape(meta.get("Artist", {}).get("value", ""))).strip()
-    img = requests.get(info.get("thumburl") or info["url"], headers=UA, timeout=60)
+    img = requests.get(_img_url(info), headers=UA, timeout=60)
     img.raise_for_status()
     with open(dest, "wb") as f:
         f.write(img.content)
@@ -118,8 +132,15 @@ def get_photo(name: str | None) -> tuple[str, str] | None:
         return None
     m = _load()
     if name in m:
-        p = os.path.join(DIR, m[name]["file"])
-        return (p, m[name]["credit"]) if os.path.exists(p) and m[name]["file"] else None
+        e = m[name]
+        p = os.path.join(DIR, e["file"])
+        stale = e["file"] and not e.get("manual") and not e.get("source")   # 예전 저화질(1200px) 자동 사진
+        if not stale or os.getenv("AUTO_PHOTO", "1") != "1":
+            if os.path.exists(p) and e["file"] and license_ok(e["credit"]):
+                return p, e["credit"]
+            if e["file"] and not license_ok(e["credit"]):
+                print(f"[photos] {name}: 출처에 라이선스가 없어 사용 안 함 → manifest.json에 라이선스 적어 주세요")
+            return None
     if os.getenv("AUTO_PHOTO", "1") != "1":
         return None
     try:
@@ -131,11 +152,18 @@ def get_photo(name: str | None) -> tuple[str, str] | None:
             local = f"{name}{ext}"
             credit = _commons_fetch(fn, os.path.join(DIR, local))
         # 못 찾은 사람도 기록(매일 재검색 방지). 나중에 직접 사진 넣으면 덮어쓰면 됨
-        m[name] = {"file": local if credit else "", "credit": credit or ""}
+        if not credit and name in m and m[name].get("file"):   # 고화질 재시도 실패 → 기존 사진 유지
+            old = m[name]
+            m[name] = {**old, "source": old.get("source") or "unknown"}
+            _save(m)
+            return (os.path.join(DIR, old["file"]), old["credit"]) if license_ok(old["credit"]) else None
+        m[name] = {"file": local if credit else "", "credit": credit or "", "source": fn or ""}
         _save(m)
         print(f"[photos] {name}: {'확보' if credit else '없음'}")
         time.sleep(1)  # 연속 호출 간격
         return (os.path.join(DIR, local), credit) if credit else None
     except Exception as e:
         print(f"[photos] {name} 검색 실패: {e}")
-        return None
+        old = m.get(name) or {}
+        p = os.path.join(DIR, old.get("file") or "_")
+        return (p, old["credit"]) if old.get("file") and os.path.exists(p) and license_ok(old["credit"]) else None

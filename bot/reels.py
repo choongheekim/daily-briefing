@@ -60,12 +60,25 @@ def _bg_image(photo, path):
     img = Image.new("RGB", (RW, RH), R.BG)
     kind = photo[2] if photo else "scene"
     if photo:
+        from PIL import ImageFilter
         ph = Image.open(photo[0]).convert("RGB")
         sc = max(RW / ph.width, RH / ph.height)
-        ph = ph.resize((int(ph.width * sc) + 1, int(ph.height * sc) + 1), Image.LANCZOS)
-        x = (ph.width - RW) // 2
-        y = int((ph.height - RH) * (0.12 if kind == "person" else 0.4))
-        img.paste(ph.crop((x, y, x + RW, y + RH)), (0, 0))
+        big = ph.resize((int(ph.width * sc) + 1, int(ph.height * sc) + 1), Image.LANCZOS)
+        x = (big.width - RW) // 2
+        y = int((big.height - RH) * (0.12 if kind == "person" else 0.4))
+        bg = big.crop((x, y, x + RW, y + RH))
+        if kind == "scene":
+            bg = R._duotone(bg)
+            if sc > R.FULL_MAX_UPSCALE:
+                bg = bg.filter(ImageFilter.GaussianBlur(3))
+            img.paste(bg, (0, 0))
+        elif sc <= R.FULL_MAX_UPSCALE:
+            img.paste(R._duotone(bg, 0.18), (0, 0))
+        else:   # 저화질: 흐린 바탕 + 원본 비율 그대로 가로폭에 맞춰 선명하게
+            img.paste(R._duotone(bg.filter(ImageFilter.GaussianBlur(30))), (0, 0))
+            k = min(RW / ph.width, 760 / ph.height)
+            fp = ph.resize((int(ph.width * k), int(ph.height * k)), Image.LANCZOS)
+            img.paste(fp, ((RW - fp.width) // 2, SAFE_TOP + 150))
     grad = Image.new("L", (1, RH))
     for i in range(RH):
         t = i / RH
@@ -86,7 +99,7 @@ def _overlay(path, photo=None, num=None, tag=None, person=None, sources=None, ex
     d.rectangle([0, 0, RW, 14], fill=(0, 0, 0, 120))                  # 진행 바 트랙
     if photo and photo[1]:
         f = R.font(22, "regular")
-        d.text((RW - 30 - d.textlength(photo[1], font=f), 112), photo[1], font=f,
+        d.text((RW - 30 - d.textlength(photo[1], font=f), SAFE_TOP - 60), photo[1], font=f,
                fill=(225, 225, 230, 255), stroke_width=1, stroke_fill=(0, 0, 0, 255))
     if num is not None:
         nf = R.font(150, "title")
@@ -263,7 +276,7 @@ def build_reel(content, channel_id, out_dir, pick) -> str:
 
     # ── 이슈 장면 ──
     for i, s in enumerate(stories, 1):
-        photo = pick(s.get("person"), s.get("tag"), 20 + i, s.get("photo_queries"))
+        photo = pick(s.get("person"), s.get("tag"), 20 + i, s.get("photo_queries"), s.get("scene"))
         person_layout = bool(photo) and photo[2] in ("person", "event")
         head = s["headline"]
         cm = s.get("reel_comment") or s.get("comment") or ""

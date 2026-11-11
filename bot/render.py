@@ -183,31 +183,89 @@ def _footer(d, page, total):
     d.text((W - 70 - d.textlength(t, font=f), H - 90), t, font=f, fill=SUB)
 
 
-def _background(img, photo):
-    """전면 배경 사진. photo=(경로, 출처, 'person'|'scene').
-    person: 얼굴이 보이도록 위쪽은 밝게, 글자 영역은 어둡게
-    scene : 전체를 어둡게 깔아 글자 가독성 확보(사진은 은은하게 보임)"""
-    path, credit, kind = photo
-    ph = Image.open(path).convert("RGB")
+FULL_MAX_UPSCALE = 1.15     # 이보다 더 키워야 화면을 채우는 사진은 '저화질' → 전면 배경 금지
+FRAME = (624, 44, 1030, 404)  # 저화질 인물·현장 사진을 넣는 작은 액자(오른쪽 위)
+
+
+def _duotone(ph: Image.Image, strength: float = 1.0) -> Image.Image:
+    """계정 색 듀오톤: 어두운 곳=거의 검정, 밝은 곳=계정 색 계열. 피드 색을 통일한다."""
+    from PIL import ImageOps
+    g = ImageOps.autocontrast(ph.convert("L"), cutoff=1)
+    light = tuple(int(c * 0.35 + 235 * 0.65) for c in ACCENT)
+    duo = ImageOps.colorize(g, black=(4, 4, 8), mid=tuple(int(c * 0.45 + 40) for c in ACCENT), white=light)
+    return duo if strength >= 1 else Image.blend(ph.convert("RGB"), duo, strength)
+
+
+def _cover_fit(ph: Image.Image, ybias: float) -> Image.Image:
     scale = max(W / ph.width, H / ph.height)
     ph = ph.resize((int(ph.width * scale) + 1, int(ph.height * scale) + 1), Image.LANCZOS)
     x = (ph.width - W) // 2
-    y = int((ph.height - H) * (0.2 if kind == "person" else 0.35 if kind == "event" else 0.5))
-    img.paste(ph.crop((x, y, x + W, y + H)), (0, 0))
+    y = int((ph.height - H) * ybias)
+    return ph.crop((x, y, x + W, y + H))
+
+
+def photo_quality(path: str) -> tuple[bool, float]:
+    """(화면을 꽉 채워도 되는 화질인지, 필요한 확대 배율)"""
+    with Image.open(path) as im:
+        scale = max(W / im.width, H / im.height)
+    return scale <= FULL_MAX_UPSCALE, scale
+
+
+def _background(img, photo):
+    """배경 사진. photo=(경로, 출처, 'person'|'event'|'scene').
+    - 화질 충분(확대 1.15배 이하): 전면 배경
+    - 저화질 인물·현장 사진: 흐린 듀오톤 바탕 + 오른쪽 위 작은 액자에 선명하게
+    - 장소 사진(scene): 계정 색 듀오톤, 저화질이면 흐림 처리(분위기 바탕으로만)
+    인물·현장 사진은 자연색을 살리고 계정 색을 살짝만 입힌다."""
+    from PIL import ImageFilter
+    path, credit, kind = photo
+    ph = Image.open(path).convert("RGB")
+    full, _ = photo_quality(path)
+    ybias = 0.2 if kind == "person" else 0.35 if kind == "event" else 0.5
+    framed = False
+    if kind == "scene":
+        bg = _duotone(_cover_fit(ph, ybias))
+        if not full:   # 저화질 장소 사진: 살짝만 흐리게(확대 티 숨김), 분위기 바탕으로만
+            bg = bg.filter(ImageFilter.GaussianBlur(3))
+    elif full:
+        bg = _duotone(_cover_fit(ph, ybias), 0.18)
+    else:
+        framed = True
+        bg = _duotone(_cover_fit(ph, ybias).filter(ImageFilter.GaussianBlur(28)))
+    img.paste(bg, (0, 0))
+
     grad = Image.new("L", (1, H))
     for i in range(H):
         t = i / H
-        if kind in ("person", "event"):
+        if kind in ("person", "event") and not framed:
             a = 90 if t < 0.12 else 30 if t < 0.30 else int(30 + 200 * min(1, (t - 0.30) / 0.25))
+        elif framed:
+            a = int(120 + 100 * t)
         else:
-            a = int(150 + 75 * t)
+            a = int(140 + 85 * t)
         grad.putpixel((0, i), min(a, 232))
     img.paste(Image.new("RGB", (W, H), BG), (0, 0), grad.resize((W, H)))
+
+    if framed:   # 저화질 사진은 작게, 선명하게
+        x0, y0, x1, y1 = FRAME
+        bw, bh = x1 - x0, y1 - y0
+        sc = max(bw / ph.width, bh / ph.height)
+        fp = ph.resize((int(ph.width * sc) + 1, int(ph.height * sc) + 1), Image.LANCZOS)
+        cx = (fp.width - bw) // 2
+        cy = int((fp.height - bh) * (0.15 if kind == "person" else 0.4))
+        fp = fp.crop((cx, cy, cx + bw, cy + bh))
+        m = Image.new("L", (bw, bh), 0)
+        ImageDraw.Draw(m).rounded_rectangle([0, 0, bw - 1, bh - 1], radius=22, fill=255)
+        d0 = ImageDraw.Draw(img)
+        d0.rounded_rectangle([x0 - 5, y0 - 5, x1 + 5, y1 + 5], radius=26, fill=ACCENT)
+        img.paste(fp, (x0, y0), m)
+
     d = ImageDraw.Draw(img)
     d.rectangle([0, 0, W, 14], fill=ACCENT)
-    if credit:
-        f = font(20, "regular")
-        d.text((W - 30 - d.textlength(credit, font=f), 28), credit, font=f, fill=(225, 225, 230), stroke_width=1, stroke_fill=(0, 0, 0))
+    if credit:   # 출처: 카드 맨 아래 작은 글씨
+        f = font(19, "regular")
+        txt = credit if d.textlength(credit, font=f) < W - 100 else credit[:60] + "…"
+        d.text((W - 40 - d.textlength(txt, font=f), H - 40), txt, font=f, fill=(200, 200, 208))
 
 
 def cover(title: str, stories: list[dict], total: int, photo=None) -> Image.Image:
@@ -354,19 +412,37 @@ def outro(total: int, photo=None) -> Image.Image:
     return img
 
 
-def pick_photo(person, tag, salt, queries=None):
-    """배경 사진 선택: ① 정부 현장 사진 → ② 인물 사진 → ③ 분야별 장소 → ④ 기본."""
+# Pexels 기본 검색어(분야별). 특정 나라 건물·국기 대신 사물·분위기 위주 → 엉뚱한 나라 사진 방지
+SCENE_DEFAULT = {"경제": "stock market chart screen", "부동산": "apartment buildings aerial",
+                 "예산": "calculator coins documents", "선거": "ballot box voting",
+                 "외교": "conference table microphones", "안보": "barbed wire fence sky",
+                 "지방": "city street night lights", "여당": "microphones press conference",
+                 "야당": "microphones press conference", "정당": "microphones press conference"}
+# 실제 한국 장소가 중요한 분야 → 검수된 위키미디어 장소 사진을 먼저
+PLACE_TAGS = {"국회", "대통령실", "사법", "법무부", "검찰", "법원", "특검", "청와대", "정부"}
+
+
+def pick_photo(person, tag, salt, queries=None, scene=None):
+    """배경 사진 선택: ① 정부 현장 사진 → ② 인물 사진 → ③ 분위기 배경(Pexels/검수 장소).
+    출처 문구에 라이선스가 없는 사진은 쓰지 않는다."""
     from bot.backgrounds import get_background
     from bot.event_photos import get_event_photo
-    from bot.photos import get_photo
+    from bot.pexels import get_scene
+    from bot.photos import get_photo, license_ok
     e = get_event_photo(queries or [], tag)
-    if e:
+    if e and license_ok(e[1]):
         return (*e, "event")
     p = get_photo(person)
-    if p:
+    if p and license_ok(p[1]):
         return (*p, "person")
-    b = get_background(tag, salt)
-    return (*b, "scene") if b else None
+    q = scene or SCENE_DEFAULT.get((tag or "").strip())
+    order = ([lambda: get_background(tag, salt), lambda: get_scene(q)] if (tag or "").strip() in PLACE_TAGS
+             else [lambda: get_scene(q), lambda: get_background(tag, salt)])
+    for f in order:
+        b = f()
+        if b and license_ok(b[1]):
+            return (*b, "scene")
+    return None
 
 
 def render_all(content: dict, out_dir: str) -> list[str]:
@@ -376,12 +452,17 @@ def render_all(content: dict, out_dir: str) -> list[str]:
     total = len(stories) + 2
     pick = pick_photo
 
-    top_tag = stories[0].get("tag") if stories else None
-    top_q = stories[0].get("photo_queries") if stories else None
-    imgs = [cover(content["cover_title"], stories, total, pick(content.get("cover_person"), top_tag, 0, top_q))]
-    imgs += [story_card(s, i, i + 1, total, pick(s.get("person"), s.get("tag"), i, s.get("photo_queries")))
-             for i, s in enumerate(stories, 1)]
-    imgs.append(outro(total, pick(None, None, 7)))
+    top = stories[0] if stories else {}
+    photos = [pick(content.get("cover_person"), top.get("tag"), 0, top.get("photo_queries"), top.get("scene"))]
+    photos += [pick(s.get("person"), s.get("tag"), i, s.get("photo_queries"), s.get("scene"))
+               for i, s in enumerate(stories, 1)]
+    photos.append(pick(None, None, 7))
+    imgs = [cover(content["cover_title"], stories, total, photos[0])]
+    imgs += [story_card(s, i, i + 1, total, photos[i]) for i, s in enumerate(stories, 1)]
+    imgs.append(outro(total, photos[-1]))
+    # 캡션용 사진 출처(카드 순서대로, 중복 제거)
+    credits = list(dict.fromkeys(ph[1].replace("사진: ", "") for ph in photos if ph and ph[1]))
+    content["photo_credits"] = credits
     paths = []
     for i, im in enumerate(imgs, 1):
         p = os.path.join(out_dir, f"{i:02d}.jpg")

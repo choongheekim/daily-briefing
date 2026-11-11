@@ -40,7 +40,8 @@ WRITE = """오늘 다룰 이슈와 근거 기사 본문이다.
 
 {bundle}
 
-photo_queries: 대통령·총리·장관 등 정부 공식 행사 관련 이슈일 때만 정부 공식 사진 검색용 짧은 키워드를 한국어 1개·영어 1개(예: ["대통령 소방의 날", "President Fire Day"]). 국회·정당 이슈면 [].
+photo_queries: 정부 공식 사진(Korea.net, 영어 제목) 검색용 영어 키워드 1~2개. 대통령·총리·장관·정부 행사가 나오면 반드시 넣는다(예: ["President Lee Jae-myung Cabinet meeting", "Cabinet meeting"]). 국회·정당만의 이슈면 [].
+scene: 인물 사진이 없을 때 쓸 분위기 배경 사진 검색어(영어 2~4단어). 사람·얼굴·특정 나라 건물·국기가 없는 사물·분위기 위주(예: "judge gavel desk", "stock market chart screen", "ballot box voting", "apartment buildings aerial").
 
 위 본문만 근거로, 이 계정의 시각에서 아래 JSON만 출력해라. 다른 말은 쓰지 마라.
 {{
@@ -53,7 +54,8 @@ photo_queries: 대통령·총리·장관 등 정부 공식 행사 관련 이슈�
       "tag": "다음 중 하나: 국회, 여당, 야당, 대통령실, 사법, 외교, 안보, 경제, 부동산, 예산, 지방, 선거",
       "headline": "강한 제목(22자 이내, 사실 기반)",
       "person": "제목의 주인공 실명(본문 표기 그대로) 또는 null",
-      "photo_queries": ["한국어 검색어", "English query"],
+      "photo_queries": ["English query"],
+      "scene": "english scene query",
       "points": ["핵심 사실 1(32자 이내, 본문의 구체적 숫자·발언 활용)", "핵심 사실 2(32자 이내)", "핵심 사실 3(32자 이내)"],
       "comment": "카드 한줄평(35~55자, 2문장까지, [한줄평 어조])",
       "reel_comment": "릴스 내레이션 논평(80~120자, 2~3문장, [릴스 어조], 말하듯 자연스럽게)",
@@ -110,21 +112,58 @@ def _log_cost(msg):
           f"≈ {usd * USD_KRW:.0f}원 (누적 {COST['usd'] * USD_KRW:.0f}원)")
 
 
+def _claude_cli(system: str, user: str, model: str) -> str:
+    """구독 로그인된 Claude Code(claude -p)로 호출 — API 요금 0원.
+    ANTHROPIC_API_KEY 등이 남아 있으면 API로 청구될 수 있으므로 환경변수에서 지운다."""
+    import shutil
+    import subprocess
+    import tempfile
+    exe = shutil.which("claude")
+    if not exe:
+        raise RuntimeError("claude 명령을 찾지 못함 (Claude Code 설치·PATH 확인)")
+    env = {k: v for k, v in os.environ.items()
+           if k not in ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "ANTHROPIC_BASE_URL",
+                        "CLAUDE_CODE_USE_BEDROCK", "CLAUDE_CODE_USE_VERTEX")}
+    alias = "haiku" if "haiku" in model else "opus" if "opus" in model else "sonnet"
+    with tempfile.TemporaryDirectory() as tmp:   # 빈 폴더에서 실행(다른 프로젝트 설정 안 읽게)
+        sp = os.path.join(tmp, "system.txt")
+        open(sp, "w", encoding="utf-8").write(system)
+        cmd = [exe, "-p", "--model", alias, "--system-prompt-file", sp,
+               "--disallowedTools", "*", "--strict-mcp-config", "--no-session-persistence",
+               "--max-turns", "3", "--output-format", "json"]
+        r = subprocess.run(cmd, input=user.encode("utf-8"), capture_output=True,
+                           cwd=tmp, env=env, timeout=900)
+    out = r.stdout.decode("utf-8", "replace")
+    try:
+        data = json.loads(out)
+    except json.JSONDecodeError:
+        raise RuntimeError(f"claude -p 실패(코드 {r.returncode}): {out[-300:]} {r.stderr.decode('utf-8', 'replace')[-300:]}")
+    if data.get("is_error"):
+        raise RuntimeError(f"claude -p 오류: {str(data.get('result'))[:300]}")
+    u = data.get("usage", {})
+    print(f"[구독] {alias} 입력 {u.get('input_tokens', 0):,} / 출력 {u.get('output_tokens', 0):,} 토큰 (API 요금 0원)")
+    return data.get("result", "")
+
+
 def _ask(system: str, user: str, max_tokens: int = 8000, model: str | None = None) -> dict:
-    client = anthropic.Anthropic()
+    cli = os.getenv("LLM_BACKEND", "api") == "cli"
+    client = None if cli else anthropic.Anthropic()
     for attempt in range(3):
         try:
-            kw = dict(model=model or MODEL, max_tokens=max_tokens, system=system,
-                      messages=[{"role": "user", "content": user}])
-            try:   # '생각' 토큰은 출력 요금으로 청구되므로 끈다
-                msg = client.messages.create(thinking={"type": "disabled"}, **kw)
-            except anthropic.BadRequestError:
-                msg = client.messages.create(**kw)
-            _log_cost(msg)
-            # 응답에 '생각(thinking)' 블록이 먼저 올 수 있으므로 텍스트 블록만 모은다
-            text = "".join(getattr(b, "text", "") for b in msg.content if getattr(b, "type", "") == "text")
+            if cli:
+                text = _claude_cli(system, user, model or MODEL)
+            else:
+                kw = dict(model=model or MODEL, max_tokens=max_tokens, system=system,
+                          messages=[{"role": "user", "content": user}])
+                try:   # '생각' 토큰은 출력 요금으로 청구되므로 끈다
+                    msg = client.messages.create(thinking={"type": "disabled"}, **kw)
+                except anthropic.BadRequestError:
+                    msg = client.messages.create(**kw)
+                _log_cost(msg)
+                # 응답에 '생각(thinking)' 블록이 먼저 올 수 있으므로 텍스트 블록만 모은다
+                text = "".join(getattr(b, "text", "") for b in msg.content if getattr(b, "type", "") == "text")
             if not text:
-                raise RuntimeError(f"텍스트 응답 없음 (stop_reason={getattr(msg, 'stop_reason', None)})")
+                raise ValueError("텍스트 응답 없음")
             return _extract_json(text)
         except (ValueError, json.JSONDecodeError) as e:
             print(f"[summarize] JSON 파싱 실패, 재시도 {attempt + 1}: {e}")

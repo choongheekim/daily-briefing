@@ -129,3 +129,26 @@
 - 자동 게시라 사람 검수가 없습니다. 프롬프트에 "기사에 없는 사실 금지, 의혹은 의혹으로 표기, 비하 표현 금지" 규칙을 넣어 두었지만, 처음 1~2주는 dry_run으로 결과를 보고 톤을 조정하는 걸 권합니다.
 - 한국은 사실 적시 명예훼손도 처벌 대상입니다. 개인 실명 + 의혹 기사는 특히 주의하세요.
 - 언론사 기사 사진은 저작권 때문에 쓰지 않고 텍스트 카드만 만듭니다.
+
+---
+
+## 2026-11 변경: 문구는 회사 PC(Claude Code 구독), 게시는 GitHub Actions
+
+| 시간 | 어디서 | 하는 일 |
+|---|---|---|
+| 06:40 | 회사 PC (작업 스케줄러) | 기사 수집 → `claude -p`(구독, API 요금 0원)로 문구 작성 → `posts/<채널>/<날짜>/content.json` 올림 |
+| 07:17 | GitHub Actions | 그 문구로 카드·릴스 만들기 → 인스타 게시 (Claude 호출 없음) |
+
+- PC 설치: `pc/점검.bat` 더블클릭 → 모두 정상이면 `pc/작업등록.bat` 더블클릭
+- PC 로그: `%USERPROFILE%\daily-briefing-logs\날짜.txt`
+- 실패 알림(선택): PC는 `%USERPROFILE%\daily-briefing-pc.txt`, GitHub은 Secret `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`
+- Secret `ANTHROPIC_API_KEY`가 남아 있으면 PC 문구가 없는 날만 API로 대신 작성(요금 발생). 지우면 그런 날은 게시를 건너뜀
+- 카드·영상은 `media-right` / `media-left` 브랜치에 그날 것만 덮어써서 올림 → 저장소가 더 이상 커지지 않음
+
+### 사진 규칙
+- 순서: 정부 현장 사진(Korea.net Flickr) → 인물 사진(위키미디어) → 분위기 배경(Pexels / 검수된 장소 사진)
+- 라이선스: CC BY, CC0, 공공누리 1유형을 우선, CC BY-SA는 후순위. 출처에 라이선스가 확인 안 되는 사진은 사용 안 함
+- 정책브리핑(korea.kr) 사진은 사용 안 함: 공공누리 표시가 있어도 사진은 사전 협의가 필요하다고 명시돼 있음
+- 화질: 1080×1350을 1.15배 넘게 키워야 하는 사진은 전면 배경 대신 작은 액자로
+- Secret: `FLICKR_API_KEY`(정부 현장 사진), `PEXELS_API_KEY`(배경 사진) — 둘 다 무료
+- 개선 전후 비교: Run workflow에서 `dry_run=true`, `compare_date=비교할 날짜`

@@ -1,0 +1,4 @@
+# 이 파일을 복사해서 %USERPROFILE%\daily-briefing-pc.txt 로 저장하고 값을 채우세요(선택).
+# 텔레그램 개인 비서봇 토큰과 내 채팅 ID — 문구 작성 실패 시 알림용
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=

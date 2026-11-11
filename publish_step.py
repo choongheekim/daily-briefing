@@ -10,7 +10,6 @@ import os
 from datetime import datetime
 
 from bot.news import KST
-import subprocess
 
 from bot.publish import publish_carousel, publish_reel, wait_url
 
@@ -18,13 +17,21 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--channel", required=True, choices=["right", "left"])
 cid = ap.parse_args().channel
 
-today = datetime.now(KST).strftime("%Y-%m-%d")
+today = os.getenv("POST_DATE") or datetime.now(KST).strftime("%Y-%m-%d")
 out_dir = f"posts/{cid}/{today}"
 repo = os.environ["GITHUB_REPOSITORY"]
-branch = os.getenv("GITHUB_REF_NAME", "main")
+media = f"https://raw.githubusercontent.com/{repo}/media-{cid}/{cid}/{today}"   # media_push.py가 올린 곳
+
+hp = f"history_{cid}.json"
+if any(h.get("date") == today for h in (json.load(open(hp, encoding="utf-8")) if os.path.exists(hp) else [])) \
+        and os.getenv("FORCE") != "1":
+    print(f"[{cid}] 오늘({today}) 이미 게시함 → 중복 게시 방지로 건너뜀 (다시 올리려면 FORCE=1)")
+    raise SystemExit(0)
 
 images = sorted(glob.glob(f"{out_dir}/*.jpg"))
-urls = [f"https://raw.githubusercontent.com/{repo}/{branch}/{p}" for p in images]
+urls = [f"{media}/{os.path.basename(p)}" for p in images]
+for u in urls[:1]:
+    wait_url(u)
 caption = open(f"{out_dir}/caption.txt", encoding="utf-8").read()
 content = json.load(open(f"{out_dir}/content.json", encoding="utf-8"))
 
@@ -40,11 +47,7 @@ if os.getenv("REELS", "1") == "1" and os.path.exists(reel):
     except Exception as e:
         print(f"[reels] 직접 업로드 실패 → 공개 주소 방식으로 재시도: {e}")
         try:
-            subprocess.run(["git", "add", "-f", reel], check=True)
-            subprocess.run(["git", "commit", "-qm", f"{cid} reel {today}"], check=True)
-            subprocess.run(["git", "pull", "-q", "--rebase", "--autostash", "-X", "theirs"], check=True)
-            subprocess.run(["git", "push", "-q"], check=True)
-            url = f"https://raw.githubusercontent.com/{repo}/{branch}/{reel}"
+            url = f"{media}/reel.mp4"
             wait_url(url)
             reel_id = publish_reel(reel, rcap, public_url=url)
         except Exception as e2:

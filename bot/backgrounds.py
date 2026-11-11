@@ -10,7 +10,7 @@ import os
 import re
 from datetime import date
 
-from bot.photos import ALLOWED, _api, UA, clean_artist, html, requests
+from bot.photos import ALLOWED, _api, _img_url, UA, clean_artist, html, requests
 
 DIR = "backgrounds"
 MANIFEST = os.path.join(DIR, "manifest.json")
@@ -55,7 +55,7 @@ def _collect(topic: str) -> list[dict]:
     res = _api("https://commons.wikimedia.org/w/api.php", {
         "action": "query", "generator": "categorymembers", "gcmtitle": f"Category:{TOPICS[topic]}",
         "gcmtype": "file", "gcmlimit": 60,
-        "prop": "imageinfo", "iiprop": "url|extmetadata|size|mime", "iiurlwidth": 1400})
+        "prop": "imageinfo", "iiprop": "url|extmetadata|size|mime", "iiurlwidth": 1920})
     pages = list(res.get("query", {}).get("pages", {}).values())
     os.makedirs(DIR, exist_ok=True)
     good = []
@@ -75,7 +75,7 @@ def _collect(topic: str) -> list[dict]:
     for p, ii, meta, lic in good[::step][:PER_TOPIC]:
         artist = re.sub(r"<[^>]+>", "", html.unescape(meta.get("Artist", {}).get("value", ""))).strip()
         fn = f"{topic}_{len(out) + 1}.jpg"
-        img = requests.get(ii.get("thumburl") or ii["url"], headers=UA, timeout=60)
+        img = requests.get(_img_url(ii), headers=UA, timeout=60)
         if img.status_code != 200:
             continue
         open(os.path.join(DIR, fn), "wb").write(img.content)
@@ -94,7 +94,8 @@ def get_background(tag: str | None, salt: int = 0) -> tuple[str, str] | None:
             m[topic] = []
         if m[topic]:
             json.dump(m, open(MANIFEST, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
-    items = [i for i in m.get(topic, []) if os.path.exists(os.path.join(DIR, i["file"]))]
+    items = [i for i in m.get(topic, []) if os.path.exists(os.path.join(DIR, i["file"]))
+             and "No machine-readable" not in i["credit"]]   # 저작자 표기를 정확히 못 하는 사진은 제외
     if not items and topic != "기본":
         return get_background("기본", salt)
     if not items:
