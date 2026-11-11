@@ -65,14 +65,14 @@ jobs:
           if [ -d photos ]; then git add photos; fi
           if [ -d event_photos ]; then git add event_photos; fi
           git commit -qm "${{ matrix.channel }} post $(TZ=Asia/Seoul date +%F)" || true
-          git pull -q --rebase -X theirs
+          git pull -q --rebase --autostash -X theirs
           git push -q
 
           if [ "$DRY_RUN" != "true" ]; then
             python publish_step.py --channel ${{ matrix.channel }}
             git add history_${{ matrix.channel }}.json
             git commit -qm "${{ matrix.channel }} history $(TZ=Asia/Seoul date +%F)"
-            git pull -q --rebase -X theirs && git push -q
+            git pull -q --rebase --autostash -X theirs && git push -q
           fi
 
       - name: 릴스 영상 미리보기 파일(Actions 실행 화면 아래 Artifacts에서 다운로드)
