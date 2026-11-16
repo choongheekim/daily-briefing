@@ -156,7 +156,11 @@ def validate(post):
     cards = [c for c in post["cards"] if isinstance(c, dict) and c.get("type")]
     covers = [c for c in cards if c["type"] == "cover"]
     outros = [c for c in cards if c["type"] == "outro"]
-    middle = [c for c in cards if c["type"] not in ("cover", "outro")]
+    KNOWN = ("story", "profile", "timeline", "numbers", "debate")
+    odd = [c["type"] for c in cards if c["type"] not in KNOWN + ("cover", "outro")]
+    if odd:
+        log(f"알 수 없는 카드 종류 제외: {odd}")
+    middle = [c for c in cards if c["type"] in KNOWN]
     if not covers or not outros or len(middle) < 3:
         raise ValueError(f"카드 구성이 맞지 않음: {[c.get('type') for c in cards]}")
     if len(middle) > 6:

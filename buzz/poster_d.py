@@ -608,8 +608,8 @@ def render(post_dir, out_dir=None, channel=None):
     for i, card in enumerate(seq, 1):
         if card["type"] == "cover":
             img = cover(card, total, _date_label(c), punch)
-        else:
-            img = fn[card["type"]](card, i, total)
+        else:   # 모르는 종류는 본문 카드로 그림(본문이 없어도 제목만으로)
+            img = fn.get(card["type"], story)(card, i, total)
         f = os.path.join(out_dir, f"{i:02d}.jpg")
         img.save(f, quality=92, optimize=True, progressive=True)
         out.append(f)
