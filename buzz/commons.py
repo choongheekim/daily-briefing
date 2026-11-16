@@ -61,7 +61,42 @@ def _files_for(query: str, limit: int) -> list[str]:
 
 def search(query: str, limit: int = 12, min_side: int = 1000) -> list[dict]:
     """라이선스·경고·해상도 검사를 통과한 후보 목록(다운로드 전)."""
-    titles = _files_for(query, limit * 2)
+    out = _info(_files_for(query, limit * 2), min_side)
+    # 라이선스 우선(CC0·PD·공공누리1·CC BY → CC BY-SA), 그다음 직접 촬영·최근 사진
+    out.sort(key=lambda x: (x["share_alike"], not x["own_work"], -int((re.findall(r"\d{4}", x["date"]) or ["0"])[0])))
+    return out[:limit]
+
+
+def from_wikipedia(name: str, limit: int = 4, min_side: int = 600) -> list[dict]:
+    """위키백과(한국어→영어) 문서의 대표 사진 + 문서에 실린 사진. 인물·기관과 '확실히 같은 대상'인 사진을 얻는 가장 정확한 방법."""
+    titles = []
+    for lang in ("ko", "en"):
+        try:
+            r = requests.get(f"https://{lang}.wikipedia.org/w/api.php", headers=UA, timeout=30, params={
+                "action": "query", "titles": name, "redirects": 1, "prop": "pageimages|images",
+                "piprop": "name", "imlimit": 30, "format": "json", "formatversion": 2}).json()
+        except (requests.RequestException, ValueError):
+            continue
+        for pg in r.get("query", {}).get("pages", []):
+            if pg.get("missing"):
+                continue
+            if pg.get("pageimage"):
+                titles.append("File:" + pg["pageimage"])
+            titles += [i["title"].replace("파일:", "File:") for i in pg.get("images", [])]
+        if titles:
+            break
+    titles = [t for t in dict.fromkeys(titles) if re.search(r"\.(jpe?g|png|webp)$", t, re.I)
+              and not re.search(r"logo|symbol|flag|emblem|signature|서명|로고|기|map|지도", t, re.I)]
+    out = _info(titles[:20], min_side)
+    lead = titles[0] if titles else None
+    for c in out:
+        c["wiki"] = name
+        c["lead"] = c["title"] == lead
+    out.sort(key=lambda x: (not x["lead"], x["share_alike"]))
+    return out[:limit]
+
+
+def _info(titles, min_side=1000):
     out = []
     for i in range(0, len(titles), 20):
         data = _api({"action": "query", "titles": "|".join(titles[i:i + 20]), "prop": "imageinfo|templates",
@@ -93,9 +128,7 @@ def search(query: str, limit: int = 12, min_side: int = 1000) -> list[dict]:
                 "share_alike": "SA" in lic.upper(),
                 "credit": f"Photo: {artist} / {lic}",
             })
-    # 라이선스 우선(CC0·PD·공공누리1·CC BY → CC BY-SA), 그다음 직접 촬영·최근 사진
-    out.sort(key=lambda x: (x["share_alike"], not x["own_work"], -int((re.findall(r"\d{4}", x["date"]) or ["0"])[0])))
-    return out[:limit]
+    return out
 
 
 def download(c: dict) -> str | None:

@@ -194,9 +194,47 @@ def gather_photos(post, work):
         if q and q not in queries:
             queries.append(q)
     cands, seen = [], set()
+    # ① 위키백과 문서 사진(그 인물·기관이 확실한 사진)을 먼저
+    subjects = []
+    for c in post["cards"]:
+        for sj in (c.get("photo_subject") or "").split("|"):
+            sj = sj.strip()
+            if sj and sj not in subjects:
+                subjects.append(sj)
+    for sj in subjects[:6]:
+        try:
+            for c in commons.from_wikipedia(sj, limit=3):
+                if c["title"] in seen:
+                    continue
+                seen.add(c["title"])
+                path = commons.download(c)
+                if path:
+                    c["path"] = path
+                    cands.append(c)
+        except Exception as e:
+            log(f"위키백과 사진 찾기 실패({sj}): {e}")
+        time.sleep(1)
+    n_wiki = len(cands)
+    # ② 코리아넷(정부 공식 플리커) 현장 사진 — 오픈버스로 검색
+    from buzz import openverse
+    for q in queries[:5]:
+        try:
+            for c in openverse.search(q, limit=3):
+                if c["title"] + c["thumb"] in seen:
+                    continue
+                seen.add(c["title"] + c["thumb"])
+                path = openverse.download(c)
+                if path:
+                    c["path"] = path
+                    cands.append(c)
+        except Exception as e:
+            log(f"코리아넷 사진 찾기 실패({q}): {e}")
+        time.sleep(1)
+    n_kn = len(cands) - n_wiki
+    # ③ 위키미디어 공용 검색
     for q in queries[:7]:
         for c in commons.search(q, limit=5)[:4]:
-            if c["title"] in seen or len(cands) >= 20:
+            if c["title"] in seen or len(cands) >= 24:
                 continue
             seen.add(c["title"])
             path = commons.download(c)
@@ -211,7 +249,7 @@ def gather_photos(post, work):
                 if path:
                     c["path"] = path
                     cands.append(c)
-    log(f"사진 후보 {len(cands)}장")
+    log(f"사진 후보 {len(cands)}장 (위키백과 {n_wiki}장, 코리아넷 {n_kn}장)")
     return cands
 
 
@@ -239,8 +277,12 @@ def pick_photos(post, cands, work):
     sheet = os.path.join(work, "photo_candidates.jpg")
     contact_sheet(cands, sheet)
     cards = "\n".join(f"{i}. [{c['type']}] {c.get('title') if isinstance(c.get('title'), str) else ' '.join(c.get('title', []))}"
-                      f" — 사진 검색어: {c.get('photo_query')}" for i, c in enumerate(post["cards"], 1))
-    cand = "\n".join(f"{i}: {'stock(Pexels)' if c.get('stock') else 'wikimedia'} / {c['title'][:70]} / {c.get('desc', '')[:80]}"
+                      f" — 사진 대상: {c.get('photo_subject')} / 검색어: {c.get('photo_query')}"
+                      for i, c in enumerate(post["cards"], 1))
+    cand = "\n".join(f"{i}: " + (f"위키백과 '{c['wiki']}' 문서 사진{'(대표 사진)' if c.get('lead') else ''}" if c.get('wiki')
+                                 else ('코리아넷 정부 현장 사진' if c.get('koreanet') else
+                                       ('stock(Pexels)' if c.get('stock') else 'wikimedia 검색')))
+                     + f" / {c['title'][:70]} / {c.get('desc', '')[:80]}"
                      for i, c in enumerate(cands, 1))
     res = claude_json(prompts.PICK.format(sheet=sheet, topic=post["topic"], cards=cards, cand=cand),
                       tools="Read", max_turns=6, timeout=600)
@@ -338,7 +380,7 @@ def make_post(cid, slot, test):
     images = poster_d.render(post_dir, None, cid)
     open(os.path.join(post_dir, "caption.txt"), "w", encoding="utf-8").write(caption_text(post, ch, credits, used_sa))
     meta = {"id": pid, "channel": cid, "publish_at": pub.isoformat(), "topic": post["topic"],
-            "reel": slot in (REEL_SLOT,) or os.getenv("FORCE_REEL") == "1", "reel_script": post["reel"]}
+            "reel": True, "reel_script": post["reel"]}
     json.dump(meta, open(os.path.join(post_dir, "meta.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
     if test:
@@ -370,7 +412,8 @@ def make_post(cid, slot, test):
 
 
 # PC에서 고친 프로그램 파일도 같이 올린다(GitHub Actions 가 쇼츠를 만들 때 필요)
-DEPLOY = ["buzz/poster_d.py", "buzz/reel_d.py", "buzz/reel_s.py", "buzz/reel.py", "pc/run.py", "pc/prompts.py"]
+DEPLOY = ["buzz/poster_d.py", "buzz/reel_d.py", "buzz/reel_s.py", "buzz/reel.py", "pc/run.py", "pc/prompts.py",
+          "publish_queue.py", "buzz/commons.py", "buzz/openverse.py"]
 
 
 def upload(paths, msg):
