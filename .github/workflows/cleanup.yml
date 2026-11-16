@@ -1,0 +1,34 @@
+name: cleanup-duplicates
+
+# 수동 실행 전용. 같은 캡션으로 중복 게시된 인스타 게시물을 찾아(가장 먼저 올린 1개는 남김) 목록을 보여주거나 삭제한다.
+on:
+  workflow_dispatch:
+    inputs:
+      delete:
+        description: "true면 실제로 삭제(되돌릴 수 없음). 먼저 false로 목록부터 확인하세요"
+        default: "false"
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        include:
+          - channel: right
+            token: IG_ACCESS_TOKEN_RIGHT
+            user: IG_USER_ID_RIGHT
+          - channel: left
+            token: IG_ACCESS_TOKEN_LEFT
+            user: IG_USER_ID_LEFT
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -q requests
+      - name: 중복 게시물 정리
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets[matrix.token] }}
+          IG_USER_ID: ${{ secrets[matrix.user] }}
+        run: python cleanup_dupes.py --channel ${{ matrix.channel }} ${{ github.event.inputs.delete == 'true' && '--delete' || '' }}
