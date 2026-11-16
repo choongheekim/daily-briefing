@@ -50,6 +50,23 @@ def _frame(card: str, out: str):
 
 def build(cards: list[str], script: dict, out_mp4: str, work: str) -> str:
     os.makedirs(work, exist_ok=True)
+    # 새 게시물(content.json 에 쇼츠 대본이 있으면) → 쇼츠 전용 디자인으로 만든다
+    try:
+        import json
+        d = os.path.dirname(os.path.abspath(cards[0])) if cards else ""
+        cp = os.path.join(d, "content.json")
+        content = json.load(open(cp, encoding="utf-8")) if os.path.exists(cp) else {}
+        if (content.get("reel") or {}).get("lines") and isinstance(content["reel"]["lines"][0], dict):
+            for card in content["cards"]:
+                ph = card.get("photo")
+                if ph and ph.get("path"):
+                    ph["path"] = os.path.join(d, ph["path"])
+            import sys as _s
+            _s.path.insert(0, os.path.dirname(__file__))
+            import reel_s
+            return reel_s.build(content, out_mp4, work)
+    except Exception as e:  # 새 방식이 실패하면 예전 방식으로
+        print("쇼츠 디자인 실패 → 예전 릴스로:", e)
     lines = list(script.get("lines", []))[: len(cards)]
     lines += [""] * (len(cards) - len(lines))
     if script.get("hook"):

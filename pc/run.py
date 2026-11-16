@@ -26,7 +26,7 @@ os.chdir(ROOT)
 
 from PIL import Image, ImageDraw, ImageFont  # noqa: E402
 
-from buzz import commons, pexels, poster  # noqa: E402
+from buzz import commons, pexels, poster, poster_d  # noqa: E402
 from pc import prompts  # noqa: E402
 
 KST = timezone(timedelta(hours=9))
@@ -148,7 +148,8 @@ def example_text():
     ex = json.load(open(os.path.join(ROOT, "examples", "politics.json"), encoding="utf-8"))
     return json.dumps({"topic": "이용철 법무부 장관 후보자와 공소취소 논란", "code": ex["code"], "category": "국회 · 인사청문",
                        "cards": ex["cards"], "caption": "…", "hashtags": ["#…"],
-                       "reel": {"hook": "…", "lines": ["…"] * len(ex["cards"])}}, ensure_ascii=False)
+                       "reel": {"hook": "…", "lines": [{"say": "…", "show": {"type": "word", "label": "…", "text": "…"}}] * 6}},
+                      ensure_ascii=False)
 
 
 def validate(post):
@@ -165,10 +166,20 @@ def validate(post):
         log(f"카드 {len(cards)}장 → {len(post['cards'])}장으로 맞춤")
     if not post["cards"][-1].get("opinion"):
         raise ValueError("한줄평(opinion)이 없음")
+    out = post["cards"][-1]
+    punch = str(out.get("punch") or "").strip()
+    if not punch:
+        log("경고: 한마디(punch)가 없음 → 한줄평 첫 문장으로 대신")
+        punch = re.split(r"(?<=[.!?])\s", out["opinion"].strip())[0][:40]
+    out["punch"] = punch[:45]
     reel = post.get("reel") or {}
-    lines = [str(x) for x in reel.get("lines", [])][: len(post["cards"])]
-    while len(lines) < len(post["cards"]):
-        lines.append("")
+    lines = []
+    for x in (reel.get("lines") or [])[:8]:
+        if isinstance(x, dict) and x.get("say"):
+            show = x.get("show") if isinstance(x.get("show"), dict) else None
+            lines.append({"say": str(x["say"]), "show": show})
+        elif isinstance(x, str) and x.strip():
+            lines.append({"say": x, "show": None})
     post["reel"] = {"hook": reel.get("hook", ""), "lines": lines}
     txt = json.dumps(post["cards"], ensure_ascii=False)
     if re.search(r"[一-鿿]", txt):
@@ -256,7 +267,8 @@ def attach(post, cands, picks):
 
 def caption_text(post, ch, credits, used_sa):
     cap = post["caption"].strip()
-    cap += f"\n\n💬 {ch['label_short']}의 한줄평\n{post['cards'][-1]['opinion']}"
+    o = post["cards"][-1]
+    cap += f"\n\n💬 {ch['label_short']}의 한마디\n“{o['punch']}”\n{o['opinion']}"
     srcs = []
     for c in post["cards"]:
         for s in c.get("sources", []):
@@ -268,7 +280,7 @@ def caption_text(post, ch, credits, used_sa):
         cap += "\n📷 " + " · ".join(credits)
         if used_sa:
             cap += "\n(사진이 CC BY-SA 라이선스라 이 게시물 이미지도 같은 조건으로 공유할 수 있어요.)"
-    cap += "\n※ 언론 보도를 AI가 정리했어요. 한줄평은 이 계정의 의견이에요."
+    cap += "\n※ 언론 보도를 AI가 정리했어요. 한마디는 이 계정의 의견이에요."
     tags = list(dict.fromkeys(ch.get("base_hashtags", []) + post.get("hashtags", [])))
     cap += "\n\n" + " ".join(tags[:14])
     return cap[:2150]
@@ -320,9 +332,10 @@ def make_post(cid, slot, test):
 
     post_dir = os.path.join(work, "post")
     os.makedirs(post_dir, exist_ok=True)
-    json.dump({"date": pub.strftime("%Y-%m-%d"), "code": post["code"], "cards": post["cards"]},
+    json.dump({"date": pub.strftime("%Y-%m-%d"), "code": post["code"], "channel": cid, "cards": post["cards"],
+               "reel": post["reel"]},
               open(os.path.join(post_dir, "content.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=2)
-    images = poster.render(post_dir, "C", None, cid)
+    images = poster_d.render(post_dir, None, cid)
     open(os.path.join(post_dir, "caption.txt"), "w", encoding="utf-8").write(caption_text(post, ch, credits, used_sa))
     meta = {"id": pid, "channel": cid, "publish_at": pub.isoformat(), "topic": post["topic"],
             "reel": slot in (REEL_SLOT,) or os.getenv("FORCE_REEL") == "1", "reel_script": post["reel"]}
@@ -335,11 +348,20 @@ def make_post(cid, slot, test):
     os.makedirs(dst, exist_ok=True)
     for p in images + [os.path.join(post_dir, n) for n in ("caption.txt", "meta.json", "content.json")]:
         shutil.copy(p, dst)
-    # content.json 안의 사진 경로는 PC 경로라 지움(캡션·크레딧은 이미 반영됨)
+    # 쇼츠를 만들 때 쓰도록 사진을 줄여서 같이 올리고, 경로는 폴더 안 파일 이름으로 바꾼다
     c = json.load(open(os.path.join(dst, "content.json"), encoding="utf-8"))
-    for card in c["cards"]:
-        if card.get("photo"):
-            card["photo"].pop("path", None)
+    for i, card in enumerate(c["cards"]):
+        ph = card.get("photo")
+        if ph and ph.get("path"):
+            try:
+                from PIL import Image
+                im = Image.open(ph["path"]).convert("RGB")
+                im.thumbnail((1600, 1600))
+                im.save(os.path.join(dst, f"photo{i}.jpg"), quality=86)
+                ph["path"] = f"photo{i}.jpg"
+            except Exception as e:
+                log(f"사진 복사 실패: {e}")
+                ph.pop("path", None)
     json.dump(c, open(os.path.join(dst, "content.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     h = json.load(open(hist_path(cid), encoding="utf-8")) if os.path.exists(hist_path(cid)) else []
     h.append({"date": pub.strftime("%Y-%m-%d"), "slot": slot, "topic": post["topic"], "id": pid})
@@ -347,10 +369,15 @@ def make_post(cid, slot, test):
     return dst
 
 
+# PC에서 고친 프로그램 파일도 같이 올린다(GitHub Actions 가 쇼츠를 만들 때 필요)
+DEPLOY = ["buzz/poster_d.py", "buzz/reel_d.py", "buzz/reel_s.py", "buzz/reel.py", "pc/run.py", "pc/prompts.py"]
+
+
 def upload(paths, msg):
     git("config", "user.name", "news-bot-pc")
     git("config", "user.email", "news-bot-pc@users.noreply.github.com")
     git("add", *paths)
+    git("add", *[p for p in DEPLOY if os.path.exists(os.path.join(ROOT, p))], check=False)
     c = git("commit", "-qm", msg, check=False)
     if c.returncode and "nothing to commit" not in (c.stdout + c.stderr):
         raise RuntimeError("커밋 실패")
