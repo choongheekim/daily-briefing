@@ -78,10 +78,65 @@ def build_reel(d, images, meta):
                      tempfile.mkdtemp())
         os.makedirs("preview", exist_ok=True)
         shutil.copy(reel, f"preview/{cid}_{meta['id']}_reel.mp4")
+        save_short(reel, d, meta)
         return reel
     except Exception as e:
         print(f"[{cid}] 릴스 만들기 실패: {e}")
         return None
+
+
+def save_short(reel, d, meta):
+    """유튜브 쇼츠 수동 업로드용: 영상과 제목·설명을 GitHub '릴리스(shorts)'에 올려 둔다(로그인 없이 받기 가능)."""
+    if dry:
+        return
+    try:
+        name = f"{cid}_{meta['id']}"
+        cap = open(os.path.join(d, "caption.txt"), encoding="utf-8").read()
+        body = cap.split("\n\n출처:")[0].strip()
+        tags = " ".join(t for t in cap.split() if t.startswith("#"))[:300]
+        title = meta.get("topic", "")[:88] + " #shorts"
+        txt = os.path.join(tempfile.mkdtemp(), name + ".txt")
+        open(txt, "w", encoding="utf-8").write(f"[제목]\n{title}\n\n[설명]\n{body}\n\n{tags}\n")
+        mp4 = os.path.join(os.path.dirname(txt), name + ".mp4")
+        shutil.copy(reel, mp4)
+        env = dict(os.environ)
+        if subprocess.run(["gh", "release", "view", "shorts", "-R", repo], env=env, capture_output=True).returncode:
+            subprocess.run(["gh", "release", "create", "shorts", "-R", repo, "--title", "유튜브 쇼츠 보관함",
+                            "--notes", "자동으로 만든 쇼츠 영상(수동 업로드용)"], env=env, check=True)
+        subprocess.run(["gh", "release", "upload", "shorts", mp4, txt, "-R", repo, "--clobber"], env=env, check=True)
+        print(f"[{cid}] 쇼츠 보관함에 올림: {name}.mp4")
+    except Exception as e:
+        print(f"[{cid}] 쇼츠 보관함 올리기 실패: {e}")
+
+
+def tg_short(reel, d, meta, rid):
+    """쇼츠 영상 + 유튜브용 제목·설명을 텔레그램으로 보냄(유튜브는 사람이 직접 올림).
+    GitHub Secret TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID 가 있어야 동작."""
+    tok, chat = os.getenv("TELEGRAM_BOT_TOKEN"), os.getenv("TELEGRAM_CHAT_ID")
+    if not tok or not chat or dry or not reel:
+        return
+    import html
+    import requests
+    try:
+        name = "보수의 아침" if cid == "right" else "진보의 아침"
+        cap = open(os.path.join(d, "caption.txt"), encoding="utf-8").read()
+        body = cap.split("\n\n#")[0].strip()
+        tags = [t for t in cap.split() if t.startswith("#")][:10]
+        desc = (body + "\n\n" + " ".join(tags + ["#shorts"])).replace("한마디는 이 계정의 의견", "한마디는 이 채널의 의견")
+        title = (meta.get("topic", "")[:88] + " #shorts")
+        api = f"https://api.telegram.org/bot{tok}"
+        with open(reel, "rb") as f:
+            requests.post(f"{api}/sendVideo", timeout=180, files={"video": (f"{cid}_{meta['id']}.mp4", f, "video/mp4")},
+                          data={"chat_id": chat, "supports_streaming": "true", "width": 1080, "height": 1920,
+                                "caption": f"🎬 [{name}] 쇼츠 — 인스타 릴스 {'게시됨' if rid else '게시 안 됨(확인 필요)'}\n"
+                                           f"아래 제목·설명을 눌러 복사해서 유튜브에 올리세요."})
+        for label, text in (("📌 제목", title), ("📝 설명", desc[:3500])):
+            requests.post(f"{api}/sendMessage", timeout=60, data={
+                "chat_id": chat, "parse_mode": "HTML",
+                "text": f"{label}\n<code>{html.escape(text)}</code>"})
+        print(f"[{cid}] 텔레그램으로 쇼츠 보냄")
+    except Exception as e:
+        print(f"[{cid}] 텔레그램 보내기 실패: {e}")
 
 
 def post_reel(reel, caption, n_cards, pid):
@@ -173,6 +228,7 @@ else:
                 record["reel_id"] = rid
             else:
                 record["reel_tried"] = True
+            tg_short(reel, d, meta, rid)
         if record:
             json.dump(record, open(os.path.join(d, "published.json"), "w", encoding="utf-8"))
     if len(pending) > 1:
@@ -190,6 +246,7 @@ if reel_todo and not dry and not failed:
         rid = post_reel(reel, caption, len(images), meta["id"])
         if rid:
             rec["reel_id"] = rid
+        tg_short(reel, d, meta, rid)
     json.dump(rec, open(os.path.join(d, "published.json"), "w", encoding="utf-8"))
     changed = True
 

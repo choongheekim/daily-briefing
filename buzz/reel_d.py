@@ -24,6 +24,20 @@ W, H, FPS = 1080, 1920, 30
 VOICE = os.getenv("REEL_VOICE", "ko-KR-HyunsuMultilingualNeural")
 
 
+def _ffmpeg():
+    exe = shutil.which("ffmpeg")
+    if exe:
+        return exe
+    try:
+        import imageio_ffmpeg       # PC에 ffmpeg가 없으면 pip 패키지에 들어 있는 것 사용
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:
+        return "ffmpeg"
+
+
+FF = _ffmpeg()
+
+
 # ---------- 목소리 ----------
 def _ssl_patch():
     ca = os.getenv("EDGE_TTS_CA")
@@ -51,7 +65,7 @@ def tts(text, mp3, rate="+8%"):
                         words.append((s, s + ch["duration"] / 1e7, ch["text"]))
         asyncio.run(go())
         wav = mp3[:-4] + ".wav"
-        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", mp3, "-ar", "44100", "-ac", "1", wav], check=True)
+        subprocess.run([FF, "-y", "-loglevel", "error", "-i", mp3, "-ar", "44100", "-ac", "1", wav], check=True)
         with wave.open(wav) as w:
             dur = w.getnframes() / w.getframerate()
         return dur, _align(text, words), wav
@@ -380,16 +394,16 @@ def build(content, cards_dir, out_mp4, work):
     parts = []
     for i, (sc, wav) in enumerate(scenes):
         p = os.path.join(work, f"seg{i:02d}.wav")
-        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", wav, "-af", f"apad=whole_dur={sc.dur:.3f}",
+        subprocess.run([FF, "-y", "-loglevel", "error", "-i", wav, "-af", f"apad=whole_dur={sc.dur:.3f}",
                         "-t", f"{sc.dur:.3f}", "-ar", "44100", "-ac", "1", p], check=True)
         parts.append(p)
     lst = os.path.join(work, "list.txt")
     open(lst, "w").write("".join(f"file '{os.path.abspath(p)}'\n" for p in parts))
     audio = os.path.join(work, "voice.wav")
-    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", lst, "-c", "copy", audio],
+    subprocess.run([FF, "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", lst, "-c", "copy", audio],
                    check=True)
     total = sum(sc.dur for sc, _ in scenes)
-    enc = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
+    enc = subprocess.Popen([FF, "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
                             "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-", "-i", audio,
                             "-af", "loudnorm=I=-15:TP=-1.5", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
                             "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k", "-shortest",

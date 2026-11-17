@@ -72,6 +72,72 @@ def telegram(msg):
         pass
 
 
+def _ensure_pkgs():
+    """쇼츠 만들기에 필요한 무료 패키지(목소리 edge-tts, 영상 도구 imageio-ffmpeg)를 처음 한 번 자동 설치"""
+    need = []
+    for mod, pkg in (("edge_tts", "edge-tts"), ("imageio_ffmpeg", "imageio-ffmpeg"), ("requests", "requests")):
+        try:
+            __import__(mod)
+        except ImportError:
+            need.append(pkg)
+    if need:
+        log(f"쇼츠용 패키지 설치: {need}")
+        subprocess.run([sys.executable, "-m", "pip", "install", "-q", *need], check=False)
+
+
+def send_short(cid, qdir):
+    """PC에서 쇼츠 영상을 만들어 텔레그램으로 보냄(유튜브는 사람이 직접 올림). 실패해도 게시에는 영향 없음."""
+    tok, chat = os.getenv("TELEGRAM_BOT_TOKEN", ""), os.getenv("TELEGRAM_CHAT_ID", "")
+    if not tok or not chat:
+        log("텔레그램 설정(config.txt) 없음 → 쇼츠 전송 건너뜀")
+        return
+    try:
+        _ensure_pkgs()
+        import glob
+        import html
+        import importlib
+        import tempfile
+        import requests
+        sys.path.insert(0, os.path.join(ROOT, "buzz"))
+        import reel_d
+        importlib.reload(reel_d)
+        from buzz import reel_s
+        content = json.load(open(os.path.join(qdir, "content.json"), encoding="utf-8"))
+        for card in content["cards"]:
+            ph = card.get("photo")
+            if ph and ph.get("path"):
+                ph["path"] = os.path.join(qdir, ph["path"])
+        content.setdefault("channel", cid)
+        meta = json.load(open(os.path.join(qdir, "meta.json"), encoding="utf-8"))
+        t0 = time.time()
+        os.makedirs(os.path.join(ROOT, "work"), exist_ok=True)
+        mp4 = os.path.join(ROOT, "work", f"short_{cid}_{meta['id']}.mp4")
+        reel_s.build(content, mp4, tempfile.mkdtemp())
+        log(f"[{cid}] 쇼츠 만듦({time.time() - t0:.0f}초)")
+        cap = open(os.path.join(qdir, "caption.txt"), encoding="utf-8").read()
+        body = cap.split("\n\n#")[0].strip().replace("한마디는 이 계정의 의견", "한마디는 이 채널의 의견")
+        tags = [t for t in cap.split() if t.startswith("#")][:10]
+        desc = body + "\n\n" + " ".join(tags + ["#shorts"])
+        title = meta.get("topic", "")[:88] + " #shorts"
+        name = "보수의 아침" if cid == "right" else "진보의 아침"
+        at = meta.get("publish_at", "")[11:16]
+        api = f"https://api.telegram.org/bot{tok}"
+        with open(mp4, "rb") as f:
+            r = requests.post(f"{api}/sendVideo", timeout=300,
+                              files={"video": (os.path.basename(mp4), f, "video/mp4")},
+                              data={"chat_id": chat, "supports_streaming": "true", "width": 1080, "height": 1920,
+                                    "caption": f"🎬 [{name}] 쇼츠 (인스타 게시 {at})\n"
+                                               f"아래 제목·설명을 눌러 복사해서 유튜브에 올리세요."})
+        if not r.ok:
+            raise RuntimeError(f"영상 보내기 실패 {r.status_code}: {r.text[:200]}")
+        for label, text in (("📌 제목", title), ("📝 설명", desc[:3500])):
+            requests.post(f"{api}/sendMessage", timeout=60, data={
+                "chat_id": chat, "parse_mode": "HTML", "text": f"{label}\n<code>{html.escape(text)}</code>"})
+        log(f"[{cid}] 텔레그램으로 쇼츠 보냄")
+    except Exception as e:
+        log(f"[{cid}] 쇼츠 텔레그램 전송 실패: {e}")
+
+
 def git(*a, check=True):
     r = subprocess.run(["git", *a], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace")
     out = (r.stdout + r.stderr).strip()
@@ -417,7 +483,7 @@ def make_post(cid, slot, test):
 
 # PC에서 고친 프로그램 파일도 같이 올린다(GitHub Actions 가 쇼츠를 만들 때 필요)
 DEPLOY = ["buzz/poster_d.py", "buzz/reel_d.py", "buzz/reel_s.py", "buzz/reel.py", "pc/run.py", "pc/prompts.py",
-          "publish_queue.py", "buzz/commons.py", "buzz/openverse.py"]
+          "publish_queue.py", "buzz/commons.py", "buzz/openverse.py", "bot/publish.py", "pc/short_test.py"]
 
 
 def upload(paths, msg):
@@ -454,6 +520,7 @@ def main():
                 upload([os.path.relpath(out, ROOT), os.path.relpath(hist_path(cid), ROOT)],
                        f"queue {cid} {os.path.basename(out)}")
                 log(f"[{cid}] GitHub 대기열에 올림")
+                send_short(cid, out)
         except Exception as e:
             failed.append(cid)
             log(f"[{cid}] 실패: " + "".join(traceback.format_exception(e))[-1500:])
