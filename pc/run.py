@@ -30,7 +30,10 @@ from buzz import commons, pexels, poster, poster_d  # noqa: E402
 from pc import prompts  # noqa: E402
 
 KST = timezone(timedelta(hours=9))
-SLOTS = {"07:17": "아침 — 밤사이·오늘 아침 가장 큰 정치 이슈", "12:30": "점심 — 오전에 새로 나온 이슈·진전",
+SLOTS = {"07:17": "아침 — 밤사이·오늘 아침 가장 큰 정치 이슈",
+         "10:47": "오전 — 오전 회의·발표에서 새로 나온 이슈(오늘 앞서 다룬 주제와 다른 것)",
+         "12:30": "점심 — 오전에 새로 나온 이슈·진전",
+         "15:47": "오후 — 오후 들어 새로 불붙은 쟁점(오늘 앞서 다룬 주제와 다른 것)",
          "18:30": "저녁 — 오늘 하루 가장 논쟁적이었던 이슈", "now": "지금 가장 화제인 이슈"}
 REEL_SLOT = "07:17"                       # 릴스는 아침 게시물에만
 LOG = os.path.join(os.path.expanduser("~"), "daily-briefing-logs")
@@ -117,8 +120,10 @@ def send_short(cid, qdir):
         cap = open(os.path.join(qdir, "caption.txt"), encoding="utf-8").read()
         body = cap.split("\n\n#")[0].strip().replace("한마디는 이 계정의 의견", "한마디는 이 채널의 의견")
         tags = [t for t in cap.split() if t.startswith("#")][:10]
-        desc = body + "\n\n" + " ".join(tags + ["#shorts"])
-        title = meta.get("topic", "")[:88] + " #shorts"
+        desc = body + "\n\n" + " ".join([t for t in tags if t not in ("#카드뉴스",)][:4] + ["#shorts"])
+        rs = content.get("reel") or {}
+        title = (rs.get("yt_title") or meta.get("topic", ""))[:88] + " #shorts"
+        comment = rs.get("comment") or "여러분의 생각은 어떠신가요? 댓글로 남겨 주세요 👇"
         name = "보수의 아침" if cid == "right" else "진보의 아침"
         at = meta.get("publish_at", "")[11:16]
         api = f"https://api.telegram.org/bot{tok}"
@@ -130,7 +135,9 @@ def send_short(cid, qdir):
                                                f"아래 제목·설명을 눌러 복사해서 유튜브에 올리세요."})
         if not r.ok:
             raise RuntimeError(f"영상 보내기 실패 {r.status_code}: {r.text[:200]}")
-        for label, text in (("📌 제목", title), ("📝 설명", desc[:3500])):
+        tagline = ", ".join(dict.fromkeys([name.replace(" ", ""), name] + [t.lstrip("#") for t in tags]))[:450]
+        for label, text in (("📌 제목", title), ("📝 설명", desc[:3500]), ("🏷 태그 (유튜브 '태그' 칸에 붙여넣기)", tagline),
+                            ("💬 고정 댓글 (올린 뒤 댓글로 달고 '고정')", comment)):
             requests.post(f"{api}/sendMessage", timeout=60, data={
                 "chat_id": chat, "parse_mode": "HTML", "text": f"{label}\n<code>{html.escape(text)}</code>"})
         log(f"[{cid}] 텔레그램으로 쇼츠 보냄")
@@ -250,7 +257,9 @@ def validate(post):
             lines.append({"say": str(x["say"]), "show": show})
         elif isinstance(x, str) and x.strip():
             lines.append({"say": x, "show": None})
-    post["reel"] = {"hook": reel.get("hook", ""), "lines": lines}
+    post["reel"] = {"hook": reel.get("hook", ""), "lines": lines,
+                    "yt_title": str(reel.get("yt_title") or "").strip()[:60],
+                    "comment": str(reel.get("comment") or "").strip()[:200]}
     txt = json.dumps(post["cards"], ensure_ascii=False)
     if re.search(r"[一-鿿]", txt):
         log("경고: 한자가 섞여 있음 → 그 글자는 카드에서 빠질 수 있음")
