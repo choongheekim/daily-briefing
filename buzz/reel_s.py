@@ -330,21 +330,21 @@ def plan(content, R, work):
     os.makedirs(work, exist_ok=True)
     hook = P.clean(reel.get("hook") or "")
     if hook:
-        dur, words, wav = tts(hook, os.path.join(work, "a00.mp3"), "+0%")
-        out.append((Scene("hook", dur + 0.7, words), wav))
+        dur, words, wav = tts(hook, os.path.join(work, "a00.mp3"), "+6%")
+        out.append((Scene("hook", dur + 0.3, words), wav))
     for i, ln in enumerate(reel.get("lines") or []):
         say, show = (ln.get("say", ""), ln.get("show")) if isinstance(ln, dict) else (ln, None)
         show = show or _auto_show(i, R)
-        dur, words, wav = tts(P.clean(say), os.path.join(work, f"a{i + 1:02d}.mp3"), "-2%")
-        out.append((Scene("line", dur + 0.6, words, show=show, zin=i % 4 < 2), wav))
+        dur, words, wav = tts(P.clean(say), os.path.join(work, f"a{i + 1:02d}.mp3"), "+6%")
+        out.append((Scene("line", dur + 0.35, words, show=show, zin=i % 4 < 2), wav))
     punch = P.clean(content["cards"][-1].get("punch") or "")
     if punch:
         lab = R.C["label"]
         dur, words, wav = tts(f"{lab}. {punch}", os.path.join(work, "a90.mp3"), "+0%")
-        out.append((Scene("punch", dur + 1.4, words, skip=len(lab.split())), wav))
+        out.append((Scene("punch", dur + 1.3, words, skip=len(lab.split())), wav))
     end_wav = os.path.join(work, "a99.wav")
-    _silence(end_wav, 2.4)
-    out.append((Scene("end", 2.4), end_wav))
+    _silence(end_wav, 1.2)
+    out.append((Scene("end", 1.2), end_wav))
     return out
 
 

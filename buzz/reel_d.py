@@ -47,8 +47,57 @@ def _ssl_patch():
         cm._SSL_CTX = ssl.create_default_context(cafile=ca)
 
 
+ENGINE = os.getenv("REEL_TTS", "supertonic")      # supertonic(기본, 더 사람 같은 목소리) / edge
+ST_VOICE = os.getenv("REEL_ST_VOICE", "M2")
+_ST = None
+
+
+def _supertonic():
+    global _ST
+    if _ST is None:
+        try:
+            import supertonic
+        except ImportError:   # 처음 한 번 자동 설치(무료, 모델 약 300MB는 첫 실행 때 내려받음)
+            subprocess.run([sys.executable, "-m", "pip", "install", "-q", "supertonic"], check=False)
+            import supertonic
+        t = supertonic.TTS(auto_download=True)
+        _ST = (t, t.get_voice_style(voice_name=ST_VOICE))
+    return _ST
+
+
+def _tts_supertonic(text, mp3, rate):
+    import numpy as np
+    t, style = _supertonic()
+    pct = float(str(rate).replace("%", "") or 0)
+    wav, _ = t.synthesize(text, voice_style=style, lang="ko", total_steps=10, speed=1.08 * (1 + pct / 100),
+                          silence_duration=0.15)
+    a = np.asarray(wav, dtype=np.float32).reshape(-1)
+    sr = t.sample_rate
+    raw = mp3[:-4] + "_st.wav"
+    t.save_audio(wav, raw)
+    out = mp3[:-4] + ".wav"
+    subprocess.run([FF, "-y", "-loglevel", "error", "-i", raw, "-ar", "44100", "-ac", "1", out], check=True)
+    dur = len(a) / sr
+    # 단어별 시간(엔진이 안 주므로 글자 수 비율로 나눔): 앞뒤 무음 제외
+    loud = np.where(np.abs(a) > 0.02)[0]
+    s0, s1 = (loud[0] / sr, loud[-1] / sr) if len(loud) else (0.0, dur)
+    toks = text.split()
+    wts = [max(1, sum(ch.isalnum() for ch in w)) + (1.5 if w[-1:] in ".?!," else 0) for w in toks]
+    tot, acc, words = sum(wts), 0.0, []
+    for w, k in zip(toks, wts):
+        a0 = s0 + (s1 - s0) * acc / tot
+        acc += k
+        words.append((a0, s0 + (s1 - s0) * acc / tot, w))
+    return dur, words, out
+
+
 def tts(text, mp3, rate="+8%"):
     """반환: (길이초, [(시작, 끝, 단어)])"""
+    if ENGINE == "supertonic":
+        try:
+            return _tts_supertonic(text, mp3, rate)
+        except Exception as e:
+            print("supertonic 목소리 실패 → edge-tts로:", e)
     words = []
     try:
         import edge_tts
@@ -237,7 +286,7 @@ class Renderer:
         while size > 80 and len(P.bwrap(d, text, size, W - 128)) > 3:
             size -= 6
         lines = P.bwrap(d, text, size, W - 128)
-        shown = sum(1 for w in sc.words if w[0] - 0.05 <= t)
+        shown = len(sc.words)          # 첫 1초에 멈추게: 처음부터 질문 전체를 크게
         k, y = 0, 720
         for li, ln in enumerate(lines):
             x = 64
@@ -329,7 +378,8 @@ class Renderer:
                     x = P.btext(d, (x, y), p + " ", size, (255, 255, 255))
                 k += 1
             y += int(size * 1.18)
-        d.text((64, y + 50), "이 계정의 의견이에요. 여러분 생각은? 댓글로!", font=P.PB(40), fill=self.C["ink"])
+        d.text((64, y + 50), "생각 다른 친구한테 보내 보세요", font=P.PX(46), fill=self.C["ink"])
+        d.text((64, y + 120), "이 계정의 의견이에요. 여러분 생각은 댓글로!", font=P.PB(34), fill=(255, 235, 230))
         return img
 
     def frame_end(self, sc, t, prog):
@@ -338,8 +388,8 @@ class Renderer:
         self.chrome(d, prog)
         a = ease(t / 0.3)
         y = 700 + int((1 - a) * 60)
-        d.text((64, y), "매일 아침 7시", font=P.PX(56), fill=(255, 255, 255))
-        P.btext(d, (64, y + 90), "정치 이슈 하나를 깊게", 96, (255, 255, 255))
+        d.text((64, y), "하루 5번", font=P.PX(56), fill=(255, 255, 255))
+        P.btext(d, (64, y + 90), "정치 이슈, 짧고 세게", 96, (255, 255, 255))
         d.rectangle((64, y + 240, 64 + P.blen(d, self.C["handle"], 92) + 30, y + 360), fill=self.C["accent"])
         P.btext(d, (80, y + 250), self.C["handle"], 92, (255, 255, 255))
         d.text((64, y + 420), "팔로우하고 피드에서 카드로 자세히 보기", font=P.PB(40), fill=(200, 200, 210))

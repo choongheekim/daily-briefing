@@ -248,7 +248,7 @@ def validate(post):
     if not punch:
         log("경고: 한마디(punch)가 없음 → 한줄평 첫 문장으로 대신")
         punch = re.split(r"(?<=[.!?])\s", out["opinion"].strip())[0][:40]
-    out["punch"] = punch[:45]
+    out["punch"] = punch[:70]
     reel = post.get("reel") or {}
     lines = []
     for x in (reel.get("lines") or [])[:8]:
@@ -402,8 +402,8 @@ def caption_text(post, ch, credits, used_sa):
         if used_sa:
             cap += "\n(사진이 CC BY-SA 라이선스라 이 게시물 이미지도 같은 조건으로 공유할 수 있어요.)"
     cap += "\n※ 언론 보도를 AI가 정리했어요. 한마디는 이 계정의 의견이에요."
-    tags = list(dict.fromkeys(ch.get("base_hashtags", []) + post.get("hashtags", [])))
-    cap += "\n\n" + " ".join(tags[:14])
+    tags = list(dict.fromkeys(post.get("hashtags", [])[:4] + ch.get("base_hashtags", [])[:1]))
+    cap += "\n\n" + " ".join(tags[:5])
     return cap[:2150]
 
 
