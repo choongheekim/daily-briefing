@@ -3,6 +3,7 @@
 카드 한 장 = 한 장면: 흐린 카드 배경 + 가운데 카드(천천히 확대) + 그 카드 내레이션.
 첫 장면은 hook 문장을 먼저 읽고, 마지막 장면은 한줄평(계정 의견)을 읽는다.
 """
+import nowindow  # noqa: F401  윈도우 검은 창 안 뜨게 (가장 먼저)
 import asyncio
 import json
 import os

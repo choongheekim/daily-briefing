@@ -8,6 +8,7 @@
 
 글쓰기·사실 확인·사진 고르기는 이 PC의 Claude Code(claude -p, 구독 로그인)로 한다 → Claude API 요금 0원.
 """
+import nowindow  # noqa: F401  윈도우 검은 창 안 뜨게 (가장 먼저)
 import argparse
 import glob
 import json
@@ -206,7 +207,33 @@ def history(cid, days=7):
     return [x for x in h if x["date"] >= cut]
 
 
+def naver_hot():
+    """네이버 뉴스 '댓글 많은 뉴스'·'많이 본 뉴스' 제목 — 사람들이 실제로 화내고 클릭하는 주제의 지표"""
+    import html as _h
+    import requests
+    out = []
+    for url, tag in (("https://news.naver.com/main/ranking/popularMemo.naver", "댓글많은"),
+                     ("https://news.naver.com/main/ranking/popularDay.naver", "많이본")):
+        try:
+            r = requests.get(url, timeout=20, headers={"User-Agent": "Mozilla/5.0"})
+            txt = r.content.decode("cp949", errors="ignore")
+            for t in re.findall(r'class="list_title[^"]*"[^>]*>([^<]+)<', txt):
+                t = _h.unescape(t.strip())
+                if t and t not in [x[1] for x in out]:
+                    out.append((tag, t))
+        except Exception as e:
+            log(f"네이버 랭킹 수집 실패({tag}): {e}")
+    return out
+
+
 def candidates_text(ch):
+    hot = naver_hot()
+    hot_txt = "\n".join(f"- ({tag}) {t}" for tag, t in hot[:70])
+    return (("[1순위 후보 — 지금 네이버에서 댓글이 가장 많이 달리고 가장 많이 본 기사(분노·논란 지표). 여기서 정치·사회 이슈를 고를 것]\n"
+             + hot_txt + "\n\n[참고 — 이 계정이 주로 보는 매체 정치면]\n") if hot else "") + _feed_candidates(ch)
+
+
+def _feed_candidates(ch):
     from bot.news import fetch_articles
     try:
         arts = fetch_articles(ch["feeds"], hours=18, per_feed=25)
@@ -214,7 +241,7 @@ def candidates_text(ch):
         log(f"기사 수집 실패: {e}")
         arts = []
     lines = [f"- [{a['source']}] {a['title']}" + (f" — {a['summary'][:80]}" if a.get("summary") else "") for a in arts]
-    return "\n".join(lines[:90]) or "(후보 수집 실패 — 직접 검색해서 오늘 주요 정치 기사를 찾을 것)"
+    return "\n".join(lines[:50]) or "(후보 수집 실패 — 직접 검색해서 오늘 주요 정치 기사를 찾을 것)"
 
 
 def example_text():

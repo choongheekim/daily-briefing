@@ -15,6 +15,7 @@
 게시 단계(media_publish)에서 난 오류는 다른 방법으로 다시 올리지 않는다(중복 방지).
 - 피드는 올라갔는데 릴스가 빠진 게시물(3시간 이내)은 다음 실행 때 릴스만 한 번 더 시도한다.
 """
+import nowindow  # noqa: F401  윈도우 검은 창 안 뜨게 (가장 먼저)
 import argparse
 import glob
 import json

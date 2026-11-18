@@ -13,6 +13,7 @@ reel.lines 의 각 줄: {"say": "읽을 문장", "show": {...}}
   어느 장면이든 "bg_photo":번호 를 주면 어둡게 깐 사진 배경을 쓴다.
 옛 형식(문자열 줄)도 받는다 → 사진/키워드 장면을 번갈아 자동 배정.
 """
+import nowindow  # noqa: F401  윈도우 검은 창 안 뜨게 (가장 먼저)
 import json
 import os
 import subprocess

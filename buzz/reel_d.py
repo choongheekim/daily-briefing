@@ -6,6 +6,7 @@
 
 build(content, cards_dir, out_mp4, work) — content 는 content.json(+ reel{hook,lines}, channel)
 """
+import nowindow  # noqa: F401  윈도우 검은 창 안 뜨게 (가장 먼저)
 import asyncio
 import json
 import math
