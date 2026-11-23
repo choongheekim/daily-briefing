@@ -13,8 +13,8 @@ reel.lines 의 각 줄: {"say": "읽을 문장", "show": {...}}
   어느 장면이든 "bg_photo":번호 를 주면 어둡게 깐 사진 배경을 쓴다.
 옛 형식(문자열 줄)도 받는다 → 사진/키워드 장면을 번갈아 자동 배정.
 """
-import nowindow  # noqa: F401  윈도우 검은 창 안 뜨게 (가장 먼저)
 import json
+import math
 import os
 import subprocess
 import sys
@@ -23,7 +23,7 @@ from PIL import Image, ImageDraw, ImageEnhance, ImageFilter
 
 sys.path.insert(0, os.path.dirname(__file__))
 import poster_d as P  # noqa: E402
-from reel_d import (FF, FPS, H, W, Renderer, Scene, _silence, cover_fit, ease, stroke_text, tts)  # noqa: E402
+from reel_d import (FPS, H, W, Renderer, Scene, _silence, cover_fit, ease, stroke_text, tts)  # noqa: E402
 
 STAGE = 330          # 큰 그림이 시작하는 높이
 CAP_Y = 1350         # 자막 높이(쇼츠 아래쪽 버튼·제목에 안 가리게)
@@ -124,15 +124,6 @@ class Shorts(Renderer):
         P.btext(d, (64, STAGE + 150), f"{part}", 260, self.C["accent"])
         x = 64 + P.blen(d, f"{part}", 260)
         P.btext(d, (x + 20, STAGE + 260), f"/ {whole}", 130, WHITE)
-        if whole > 30:   # 숫자가 크면 점 대신 막대로(점이 화면을 넘치지 않게)
-            y0, h = STAGE + 560, 110
-            d.rounded_rectangle((64, y0, W - 64, y0 + h), 30, fill=(50, 50, 62))
-            k = ease((t - 0.3) / 0.9) * part / max(1, whole)
-            if k > 0:
-                d.rounded_rectangle((64, y0, 64 + max(60, (W - 128) * k), y0 + h), 30, fill=self.C["accent"])
-            pct = f"{part / max(1, whole) * 100:.0f}%"
-            d.text((64, y0 + h + 24), pct, font=P.PX(56), fill=(220, 220, 228))
-            return
         cols = min(6, whole)
         rows = (whole + cols - 1) // cols
         dia = min(120, (W - 128 - (cols - 1) * 26) // cols)
@@ -285,6 +276,89 @@ class Shorts(Renderer):
         self.captions(d, sc.words, t, y=CAP_Y)
         return img
 
+    # ---- 아이콘 배지: 의견 장면(말풍선)·결론 도장(판결 망치). Lucide 아이콘(ISC 라이선스) ----
+    def badge(self, img, name, x, y, size, t=0.0, bg=None, fg=WHITE):
+        a = ease(t / 0.3)
+        sz = int(size * (0.6 + 0.4 * a))
+        ox = x + (size - sz) // 2
+        oy = y + (size - sz) // 2 + int(6 * math.sin(t * 5))
+        d = ImageDraw.Draw(img)
+        d.ellipse((ox, oy, ox + sz, oy + sz), fill=bg or self.C["ink"])
+        ic = Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", f"icon_{name}.png"))
+        ic = ic.convert("RGBA").resize((int(sz * 0.56), int(sz * 0.56)), Image.LANCZOS)
+        tint = Image.new("RGBA", ic.size, fg + (255,))
+        img.paste(tint, (ox + (sz - ic.width) // 2, oy + (sz - ic.height) // 2), ic.split()[3])
+
+    def s_opinion(self, d, img, sh, t):
+        """채널 의견 장면: 화면 전체를 채널 색으로 바꾸고 마스코트가 말한다"""
+        a = ease(t / 0.22)
+        d.rectangle((0, 0, W, H), fill=self.C["accent"])
+        d.rectangle((0, 1180, W, H), fill=self.C["deep"])
+        d.text((40, 250), "“", font=P.BH(520), fill=self.C["deep"])
+        tag = (self.C["label"] + " " + str(sh.get("tag", ""))).strip()
+        P.pill(d, (64 - int((1 - a) * 300), 380), tag, P.PX(46), self.C["ink"], WHITE, pad=(28, 14), r=10)
+        txt = P.clean(sh.get("text", ""))
+        size = 112
+        wid = W - 128
+        while size > 64 and len(P.bwrap(d, txt, size, wid)) > 3:
+            size -= 6
+        y = 520 + int((1 - a) * 40)
+        for ln in P.bwrap(d, txt, size, wid)[:3]:
+            P.btext(d, (64, y), ln, size, WHITE)
+            y += int(size * 1.2)
+        self.badge(img, "quote", 64, 1000, 190, t)
+        d = ImageDraw.Draw(img)
+        d.text((276, 1060), "이 채널의 생각", font=P.PB(44), fill=WHITE)
+        d.text((276, 1118), self.C["label"], font=P.PM(30), fill=(255, 220, 220))
+
+    def frame_punch(self, sc, t, prog):
+        """결론: 어두운 배경 위에 큰 도장 + 결론 문장 + 동의/반대 유도"""
+        img = self.plain_bg()
+        d = ImageDraw.Draw(img)
+        self.chrome(d, prog)
+        a = ease(t / 0.3)
+        lab = self.C["label"]
+        f = P.BH(96)
+        tw = int(d.textlength(lab, font=f))
+        sw, sh_ = tw + 120, 220
+        st = Image.new("RGBA", (sw, sh_), (0, 0, 0, 0))
+        g = ImageDraw.Draw(st)
+        g.rounded_rectangle((6, 6, sw - 6, sh_ - 6), 28, outline=self.C["accent"], width=16)
+        g.text((60, 40), lab, font=f, fill=self.C["accent"])
+        st = st.rotate(5 - (1 - a) * 18, expand=True, resample=Image.BICUBIC)
+        k = 1.0 + (1 - a) * 0.5
+        if k != 1.0:
+            st = st.resize((int(st.width * k), int(st.height * k)), Image.LANCZOS)
+        img.paste(st, (64, 330 - int((k - 1) * 60)), st)
+        self.badge(img, "gavel", W - 270, 330, 200, t, bg=self.C["accent"])
+        d = ImageDraw.Draw(img)
+        d.text((64, 640), "결론", font=P.PB(44), fill=(200, 200, 210))
+        words = sc.words[sc.kw.get("skip", 0):]
+        text = " ".join(w[2] for w in words)
+        size = 104
+        while size > 66 and len(P.bwrap(d, text, size, W - 128)) > 5:
+            size -= 6
+        lines = P.bwrap(d, text, size, W - 128)
+        shown = sum(1 for w in words if w[0] - 0.05 <= t)
+        n, y = 0, 710
+        for ln in lines:
+            x = 64
+            for p_ in ln.split():
+                if n < shown:
+                    x = P.btext(d, (x, y), p_ + " ", size, WHITE)
+                n += 1
+            y += int(size * 1.18)
+        yb = max(y + 40, 1230)
+        for i, (txt, on) in enumerate((("동의해요", True), ("아니에요", False))):
+            x0 = 64 + i * 470
+            d.rounded_rectangle((x0, yb, x0 + 430, yb + 120), 60,
+                                fill=self.C["accent"] if on else None, outline=self.C["accent"], width=8)
+            d.text((x0 + 215 - d.textlength(txt, font=P.PB(50)) / 2, yb + 28), txt, font=P.PB(50),
+                   fill=WHITE if on else self.C["accent"])
+        d.text((64, yb + 160), "어느 쪽이든 댓글로 남겨 주세요", font=P.PB(40), fill=WHITE)
+        d.text((64, yb + 225), "한마디는 이 채널의 의견이에요", font=P.PM(30), fill=(160, 160, 170))
+        return img
+
     def captions(self, d, words, t, y=CAP_Y):
         """한 번에 한 덩어리(최대 2줄), 말하는 단어 강조. 글씨 60px."""
         from reel_d import chunks
@@ -331,21 +405,33 @@ def plan(content, R, work):
     os.makedirs(work, exist_ok=True)
     hook = P.clean(reel.get("hook") or "")
     if hook:
-        dur, words, wav = tts(hook, os.path.join(work, "a00.mp3"), "+6%")
-        out.append((Scene("hook", dur + 0.3, words), wav))
+        dur, words, wav = tts(hook, os.path.join(work, "a00.mp3"), "+0%")
+        out.append((Scene("hook", dur + 0.7, words), wav))
+    tz = P.clean(reel.get("teaser") or "")
+    if tz:                                    # 결론 예고: 결론을 한 구절로 먼저 던진다
+        ws, row = tz.split(), []
+        rows = []
+        for w_ in ws:
+            if row and len(" ".join(row + [w_])) > 8:
+                rows.append(" ".join(row)); row = []
+            row.append(w_)
+        rows.append(" ".join(row))
+        dur, words, wav = tts("결론부터 말하면, " + tz, os.path.join(work, "a05.mp3"), "+6%")
+        out.append((Scene("line", dur + 0.5, words, show={"type": "word", "label": "결론부터", "text": "\n".join(rows[:2])},
+                          zin=True), wav))
     for i, ln in enumerate(reel.get("lines") or []):
         say, show = (ln.get("say", ""), ln.get("show")) if isinstance(ln, dict) else (ln, None)
         show = show or _auto_show(i, R)
-        dur, words, wav = tts(P.clean(say), os.path.join(work, f"a{i + 1:02d}.mp3"), "+6%")
-        out.append((Scene("line", dur + 0.35, words, show=show, zin=i % 4 < 2), wav))
+        dur, words, wav = tts(P.clean(say), os.path.join(work, f"a{i + 1:02d}.mp3"), "-2%")
+        out.append((Scene("line", dur + 0.6, words, show=show, zin=i % 4 < 2), wav))
     punch = P.clean(content["cards"][-1].get("punch") or "")
     if punch:
         lab = R.C["label"]
         dur, words, wav = tts(f"{lab}. {punch}", os.path.join(work, "a90.mp3"), "+0%")
-        out.append((Scene("punch", dur + 1.3, words, skip=len(lab.split())), wav))
+        out.append((Scene("punch", dur + 1.4, words, skip=len(lab.split())), wav))
     end_wav = os.path.join(work, "a99.wav")
-    _silence(end_wav, 1.2)
-    out.append((Scene("end", 1.2), end_wav))
+    _silence(end_wav, 2.4)
+    out.append((Scene("end", 2.4), end_wav))
     return out
 
 
@@ -355,16 +441,16 @@ def build(content, out_mp4, work, cards_dir=None):
     parts = []
     for i, (sc, wav) in enumerate(scenes):
         p = os.path.join(work, f"seg{i:02d}.wav")
-        subprocess.run([FF, "-y", "-loglevel", "error", "-i", wav, "-af", f"apad=whole_dur={sc.dur:.3f}",
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", wav, "-af", f"apad=whole_dur={sc.dur:.3f}",
                         "-t", f"{sc.dur:.3f}", "-ar", "44100", "-ac", "1", p], check=True)
         parts.append(p)
     lst = os.path.join(work, "list.txt")
     open(lst, "w").write("".join(f"file '{os.path.abspath(p)}'\n" for p in parts))
     audio = os.path.join(work, "voice.wav")
-    subprocess.run([FF, "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", lst, "-c", "copy",
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", lst, "-c", "copy",
                     audio], check=True)
     total = sum(sc.dur for sc, _ in scenes)
-    enc = subprocess.Popen([FF, "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
+    enc = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
                             "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-", "-i", audio,
                             "-af", "loudnorm=I=-15:TP=-1.5", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
                             "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k", "-shortest",

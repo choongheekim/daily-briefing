@@ -284,7 +284,13 @@ def validate(post):
             lines.append({"say": str(x["say"]), "show": show})
         elif isinstance(x, str) and x.strip():
             lines.append({"say": x, "show": None})
+    for k, pos in ((1, "1"), (4, "2")):        # 중간 한마디 2번: 의견 장면(화면 전체 채널 색 + 말풍선)으로 고정
+        if len(lines) > k:
+            sh = lines[k].get("show") or {}
+            txt = str(sh.get("text") or "").strip() or lines[k]["say"][:24]
+            lines[k]["show"] = {"type": "opinion", "tag": pos, "text": txt}
     post["reel"] = {"hook": reel.get("hook", ""), "lines": lines,
+                    "teaser": str(reel.get("teaser") or "").strip()[:30],
                     "yt_title": str(reel.get("yt_title") or "").strip()[:60],
                     "comment": str(reel.get("comment") or "").strip()[:200]}
     txt = json.dumps(post["cards"], ensure_ascii=False)
@@ -293,7 +299,55 @@ def validate(post):
     post["code"] = re.sub(r"[^A-Z0-9]", "", post.get("code", "POLITICS").upper())[:10] or "POLITICS"
 
 
-def gather_photos(post, work):
+
+def _ahash(path):
+    """사진 지문(16x16 평균 해시) — 크기가 달라도 같은 사진이면 비슷하게 나온다"""
+    try:
+        im = Image.open(path).convert("L").resize((16, 16))
+        px = list(im.getdata())
+        avg = sum(px) / len(px)
+        return int("".join("1" if v > avg else "0" for v in px), 2)
+    except Exception:
+        return None
+
+
+def _hd(a, b):
+    return bin(a ^ b).count("1")
+
+
+def recent_photo_hashes(cid, n=30):
+    """이 계정이 최근 n개 게시물에 쓴 사진들의 지문"""
+    out = []
+    for d in sorted(glob.glob(os.path.join(ROOT, "queue", cid, "*")))[-n:]:
+        for f in glob.glob(os.path.join(d, "photo*.jpg")):
+            h = _ahash(f)
+            if h is not None:
+                out.append(h)
+    return out
+
+
+def drop_repeats(cands, cid, keep=24, need=8, thr=34):
+    """최근에 쓴 사진·후보끼리 겹치는 사진을 뒤로 보낸다. 새 사진이 need장 미만일 때만 옛 사진으로 채운다."""
+    recent = recent_photo_hashes(cid)
+    fresh, stale, seen = [], [], []
+    for c in cands:
+        h = _ahash(c["path"])
+        if h is None:
+            continue
+        if any(_hd(h, x) <= 8 for x in seen):          # 후보끼리 같은 사진
+            continue
+        seen.append(h)
+        dist = min((_hd(h, x) for x in recent), default=999)
+        (stale if dist <= thr else fresh).append((dist, c))
+    stale.sort(key=lambda x: -x[0])                      # 덜 비슷한 것부터
+    out = [c for _, c in fresh][:keep]
+    if len(out) < need:
+        out += [c for _, c in stale][:need - len(out)]
+    log(f"사진 중복 걸러냄: 새 사진 {len(fresh)}장 / 최근에 쓴 것과 비슷해서 뺀 것 {len(stale)}장 → 후보 {len(out)}장")
+    return out
+
+
+def gather_photos(post, work, cid=None):
     queries = []
     for c in post["cards"]:
         q = c.get("photo_query")
@@ -309,7 +363,7 @@ def gather_photos(post, work):
                 subjects.append(sj)
     for sj in subjects[:6]:
         try:
-            for c in commons.from_wikipedia(sj, limit=3):
+            for c in commons.from_wikipedia(sj, limit=4):
                 if c["title"] in seen:
                     continue
                 seen.add(c["title"])
@@ -325,7 +379,7 @@ def gather_photos(post, work):
     from buzz import openverse
     for q in queries[:5]:
         try:
-            for c in openverse.search(q, limit=3):
+            for c in openverse.search(q, limit=5):
                 if c["title"] + c["thumb"] in seen:
                     continue
                 seen.add(c["title"] + c["thumb"])
@@ -340,7 +394,7 @@ def gather_photos(post, work):
     # ③ 위키미디어 공용 검색
     for q in queries[:7]:
         for c in commons.search(q, limit=5)[:4]:
-            if c["title"] in seen or len(cands) >= 24:
+            if c["title"] in seen or len(cands) >= 34:
                 continue
             seen.add(c["title"])
             path = commons.download(c)
@@ -355,6 +409,8 @@ def gather_photos(post, work):
                 if path:
                     c["path"] = path
                     cands.append(c)
+    if cid:
+        cands = drop_repeats(cands, cid)
     log(f"사진 후보 {len(cands)}장 (위키백과 {n_wiki}장, 코리아넷 {n_kn}장)")
     return cands
 
@@ -403,7 +459,7 @@ def attach(post, cands, picks):
             continue
         taken.add(n)
         c = cands[n - 1]
-        card["photo"] = {"path": c["path"], "credit": c["credit"], "mode": "duo" if c.get("stock") else "color",
+        card["photo"] = {"path": c["path"], "credit": c["credit"], "title": c.get("title", "")[:80], "mode": "duo" if c.get("stock") else "color",
                          "cy": 0.35 if card["type"] == "cover" else 0.4}
         if c.get("stock"):
             card["photo"]["caption"] = "자료사진"
@@ -473,7 +529,7 @@ def make_post(cid, slot, test):
     except Exception as e:
         raise RuntimeError(f"사실 확인 단계 실패 → 이번 게시물은 건너뜀: {e}")
 
-    cands = gather_photos(post, work)
+    cands = gather_photos(post, work, cid)
     picks = pick_photos(post, cands, work)
     credits, used_sa = attach(post, cands, picks)
     log(f"[{cid}] 사진 배정: {picks}")
@@ -519,7 +575,8 @@ def make_post(cid, slot, test):
 
 # PC에서 고친 프로그램 파일도 같이 올린다(GitHub Actions 가 쇼츠를 만들 때 필요)
 DEPLOY = ["buzz/poster_d.py", "buzz/reel_d.py", "buzz/reel_s.py", "buzz/reel.py", "pc/run.py", "pc/prompts.py",
-          "publish_queue.py", "buzz/commons.py", "buzz/openverse.py", "bot/publish.py", "pc/short_test.py"]
+          "publish_queue.py", "buzz/commons.py", "buzz/openverse.py", "bot/publish.py", "pc/short_test.py",
+          "buzz/assets/icon_quote.png", "buzz/assets/icon_gavel.png", "buzz/assets/LICENSE-lucide.txt"]
 
 
 def upload(paths, msg):

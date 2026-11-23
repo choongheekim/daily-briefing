@@ -8,6 +8,8 @@ build(content, cards_dir, out_mp4, work) — content 는 content.json(+ reel{hoo
 """
 import nowindow  # noqa: F401  윈도우 검은 창 안 뜨게 (가장 먼저)
 import asyncio
+import re
+import time
 import json
 import math
 import os
@@ -92,41 +94,106 @@ def _tts_supertonic(text, mp3, rate):
     return dur, words, out
 
 
-def tts(text, mp3, rate="+8%"):
-    """반환: (길이초, [(시작, 끝, 단어)])"""
-    if ENGINE == "supertonic":
-        try:
-            return _tts_supertonic(text, mp3, rate)
-        except Exception as e:
-            print("supertonic 목소리 실패 → edge-tts로:", e)
-    words = []
+def _note(msg):
+    """TTS 문제를 눈에 보이게 남김(화면 + work/tts_log.txt)"""
+    print(msg, flush=True)
     try:
-        import edge_tts
-        _ssl_patch()
+        d = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "work")
+        os.makedirs(d, exist_ok=True)
+        with open(os.path.join(d, "tts_log.txt"), "a", encoding="utf-8") as f:
+            f.write(time.strftime("%m-%d %H:%M:%S ") + msg + "\n")
+    except Exception:
+        pass
 
-        async def go():
-            com = edge_tts.Communicate(text, VOICE, rate=rate, boundary="WordBoundary")
-            with open(mp3, "wb") as f:
-                async for ch in com.stream():
-                    if ch["type"] == "audio":
-                        f.write(ch["data"])
-                    elif ch["type"] == "WordBoundary":
-                        s = ch["offset"] / 1e7
-                        words.append((s, s + ch["duration"] / 1e7, ch["text"]))
-        asyncio.run(go())
-        wav = mp3[:-4] + ".wav"
-        subprocess.run([FF, "-y", "-loglevel", "error", "-i", mp3, "-ar", "44100", "-ac", "1", wav], check=True)
+
+def _voiced(wav, min_peak=600):
+    """wav에 실제 소리가 있는지(무음 방지)"""
+    try:
+        import numpy as np
         with wave.open(wav) as w:
-            dur = w.getnframes() / w.getframerate()
-        return dur, _align(text, words), wav
-    except Exception as e:  # 인터넷이 안 되면 무음 + 글자수로 시간 배분
-        print("tts 실패 → 무음:", e)
-        toks = text.split()
-        dur = max(1.6, len(text.replace(" ", "")) * 0.13)
-        step = dur / max(1, len(toks))
-        wav = mp3[:-4] + ".wav"
-        _silence(wav, dur)
-        return dur, [(i * step, (i + 1) * step, t) for i, t in enumerate(toks)], wav
+            a = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16)
+        return len(a) > 0 and int(np.abs(a).max()) >= min_peak
+    except Exception:
+        return False
+
+
+def _clean_tts(text):
+    """엔진이 못 읽는 글자(이모지·따옴표 장식 등) 제거"""
+    t = re.sub(r"[“”\"'‘’「」『』《》<>\[\]()·…~*#@]", " ", text)
+    t = re.sub(r"[^\w\s.,?!%가-힣-]", " ", t)
+    return re.sub(r"\s+", " ", t).strip() or text
+
+
+_ENG = None
+
+
+def _engine_for_video():
+    """영상 하나는 목소리 하나로: 처음에 한 번 시험 합성해 엔진을 정한다(중간에 목소리가 바뀌거나 빠지는 것 방지)"""
+    global _ENG
+    if _ENG:
+        return _ENG
+    if ENGINE == "supertonic":
+        for k in range(2):
+            try:
+                import tempfile
+                tmp = os.path.join(tempfile.mkdtemp(), "probe.mp3")
+                _, _, w = _tts_supertonic("안녕하세요 테스트입니다", tmp, "+0%")
+                if _voiced(w):
+                    _ENG = "supertonic"
+                    return _ENG
+                _note("supertonic 시험 합성이 무음 → 재시도")
+            except Exception as e:
+                _note(f"supertonic 시험 실패({k + 1}/2): {e}")
+                time.sleep(3)
+        _note("supertonic 사용 불가 → 이 영상은 edge-tts로")
+    _ENG = "edge"
+    return _ENG
+
+
+def _tts_edge(text, mp3, rate):
+    import edge_tts
+    _ssl_patch()
+    words = []
+
+    async def go():
+        com = edge_tts.Communicate(text, VOICE, rate=rate, boundary="WordBoundary")
+        with open(mp3, "wb") as f:
+            async for ch in com.stream():
+                if ch["type"] == "audio":
+                    f.write(ch["data"])
+                elif ch["type"] == "WordBoundary":
+                    s0 = ch["offset"] / 1e7
+                    words.append((s0, s0 + ch["duration"] / 1e7, ch["text"]))
+    asyncio.run(go())
+    wav = mp3[:-4] + ".wav"
+    subprocess.run([FF, "-y", "-loglevel", "error", "-i", mp3, "-ar", "44100", "-ac", "1", wav], check=True)
+    with wave.open(wav) as w:
+        dur = w.getnframes() / w.getframerate()
+    return dur, _align(text, words), wav
+
+
+def tts(text, mp3, rate="+8%"):
+    """반환: (길이초, [(시작, 끝, 단어)], wav). 소리가 없으면 재시도하고, 끝내 안 되면 오류를 낸다(무음 영상 방지)."""
+    eng = _engine_for_video()
+    spoken = _clean_tts(text)
+    order = ["supertonic", "edge"] if eng == "supertonic" else ["edge", "edge"]
+    last = None
+    for attempt, name in enumerate(order + ["edge"]):
+        try:
+            if name == "supertonic":
+                dur, words, wav = _tts_supertonic(spoken, mp3, rate)
+            else:
+                dur, words, wav = _tts_edge(spoken, mp3, rate)
+            if _voiced(wav):
+                if attempt:
+                    _note(f"TTS {attempt + 1}번째 시도에서 성공({name}): {text[:20]}")
+                return dur, words, wav
+            last = "무음 결과"
+        except Exception as e:
+            last = e
+        _note(f"TTS 실패({name}, {attempt + 1}번째): {last} / '{text[:25]}'")
+        time.sleep(2)
+    raise RuntimeError(f"TTS 최종 실패: '{text[:25]}' ({last})")
 
 
 def _align(text, words):
