@@ -23,6 +23,13 @@ from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageOps
 sys.path.insert(0, os.path.dirname(__file__))
 import poster_d as P  # noqa: E402
 
+# 창 없이 예약 실행되면 sys.stdout/stderr 가 None 이라 모델 내려받기(진행바)가 'NoneType has no attribute write' 로 죽는다
+for _n in ("stdout", "stderr"):
+    if getattr(sys, _n) is None:
+        setattr(sys, _n, open(os.devnull, "w", encoding="utf-8"))
+os.environ.setdefault("HF_HUB_DISABLE_PROGRESS_BARS", "1")
+os.environ.setdefault("TQDM_DISABLE", "1")
+
 W, H, FPS = 1080, 1920, 30
 VOICE = os.getenv("REEL_VOICE", "ko-KR-HyunsuMultilingualNeural")
 
@@ -74,8 +81,16 @@ def _tts_supertonic(text, mp3, rate):
     pct = float(str(rate).replace("%", "") or 0)
     wav, _ = t.synthesize(text, voice_style=style, lang="ko", total_steps=10, speed=1.08 * (1 + pct / 100),
                           silence_duration=0.15)
-    a = np.asarray(wav, dtype=np.float32).reshape(-1)
+    arr = np.asarray(wav, dtype=np.float32)
+    a = arr.reshape(-1)
     sr = t.sample_rate
+    # 앞뒤 무음 잘라내기: 엔진이 끝에 붙이는 여유 무음 때문에 '말하다 뚝 멈추는' 느낌이 나던 것을 없앤다
+    loud0 = np.where(np.abs(a) > 0.02)[0]
+    if len(loud0):
+        i0 = max(0, int(loud0[0]) - int(0.04 * sr))
+        i1 = min(len(a), int(loud0[-1]) + int(0.14 * sr))
+        wav = arr[..., i0:i1] if arr.ndim > 1 else arr[i0:i1]
+        a = a[i0:i1]
     raw = mp3[:-4] + "_st.wav"
     t.save_audio(wav, raw)
     out = mp3[:-4] + ".wav"

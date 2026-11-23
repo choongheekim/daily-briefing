@@ -13,6 +13,7 @@ reel.lines 의 각 줄: {"say": "읽을 문장", "show": {...}}
   어느 장면이든 "bg_photo":번호 를 주면 어둡게 깐 사진 배경을 쓴다.
 옛 형식(문자열 줄)도 받는다 → 사진/키워드 장면을 번갈아 자동 배정.
 """
+import nowindow  # noqa: F401  윈도우 검은 창 안 뜨게 (가장 먼저)
 import json
 import math
 import os
@@ -23,7 +24,7 @@ from PIL import Image, ImageDraw, ImageEnhance, ImageFilter
 
 sys.path.insert(0, os.path.dirname(__file__))
 import poster_d as P  # noqa: E402
-from reel_d import (FPS, H, W, Renderer, Scene, _silence, cover_fit, ease, stroke_text, tts)  # noqa: E402
+from reel_d import (FF, FPS, H, W, Renderer, Scene, _silence, cover_fit, ease, stroke_text, tts)  # noqa: E402
 
 STAGE = 330          # 큰 그림이 시작하는 높이
 CAP_Y = 1350         # 자막 높이(쇼츠 아래쪽 버튼·제목에 안 가리게)
@@ -124,6 +125,15 @@ class Shorts(Renderer):
         P.btext(d, (64, STAGE + 150), f"{part}", 260, self.C["accent"])
         x = 64 + P.blen(d, f"{part}", 260)
         P.btext(d, (x + 20, STAGE + 260), f"/ {whole}", 130, WHITE)
+        if whole > 30:   # 숫자가 크면 점 대신 막대로(점이 화면을 넘치지 않게)
+            y0, h = STAGE + 560, 110
+            d.rounded_rectangle((64, y0, W - 64, y0 + h), 30, fill=(50, 50, 62))
+            k = ease((t - 0.3) / 0.9) * part / max(1, whole)
+            if k > 0:
+                d.rounded_rectangle((64, y0, 64 + max(60, (W - 128) * k), y0 + h), 30, fill=self.C["accent"])
+            pct = f"{part / max(1, whole) * 100:.0f}%"
+            d.text((64, y0 + h + 24), pct, font=P.PX(56), fill=(220, 220, 228))
+            return
         cols = min(6, whole)
         rows = (whole + cols - 1) // cols
         dia = min(120, (W - 128 - (cols - 1) * 26) // cols)
@@ -405,8 +415,8 @@ def plan(content, R, work):
     os.makedirs(work, exist_ok=True)
     hook = P.clean(reel.get("hook") or "")
     if hook:
-        dur, words, wav = tts(hook, os.path.join(work, "a00.mp3"), "+0%")
-        out.append((Scene("hook", dur + 0.7, words), wav))
+        dur, words, wav = tts(hook, os.path.join(work, "a00.mp3"), "+6%")
+        out.append((Scene("hook", dur + 0.3, words), wav))
     tz = P.clean(reel.get("teaser") or "")
     if tz:                                    # 결론 예고: 결론을 한 구절로 먼저 던진다
         ws, row = tz.split(), []
@@ -416,22 +426,22 @@ def plan(content, R, work):
                 rows.append(" ".join(row)); row = []
             row.append(w_)
         rows.append(" ".join(row))
-        dur, words, wav = tts("결론부터 말하면, " + tz, os.path.join(work, "a05.mp3"), "+6%")
-        out.append((Scene("line", dur + 0.5, words, show={"type": "word", "label": "결론부터", "text": "\n".join(rows[:2])},
+        dur, words, wav = tts("결론부터 말하면, " + tz, os.path.join(work, "a0t.mp3"), "+6%")
+        out.append((Scene("line", dur + 0.3, words, show={"type": "word", "label": "결론부터", "text": "\n".join(rows[:2])},
                           zin=True), wav))
     for i, ln in enumerate(reel.get("lines") or []):
         say, show = (ln.get("say", ""), ln.get("show")) if isinstance(ln, dict) else (ln, None)
         show = show or _auto_show(i, R)
-        dur, words, wav = tts(P.clean(say), os.path.join(work, f"a{i + 1:02d}.mp3"), "-2%")
-        out.append((Scene("line", dur + 0.6, words, show=show, zin=i % 4 < 2), wav))
+        dur, words, wav = tts(P.clean(say), os.path.join(work, f"a{i + 1:02d}.mp3"), "+6%")
+        out.append((Scene("line", dur + 0.35, words, show=show, zin=i % 4 < 2), wav))
     punch = P.clean(content["cards"][-1].get("punch") or "")
     if punch:
         lab = R.C["label"]
         dur, words, wav = tts(f"{lab}. {punch}", os.path.join(work, "a90.mp3"), "+0%")
-        out.append((Scene("punch", dur + 1.4, words, skip=len(lab.split())), wav))
+        out.append((Scene("punch", dur + 1.3, words, skip=len(lab.split())), wav))
     end_wav = os.path.join(work, "a99.wav")
-    _silence(end_wav, 2.4)
-    out.append((Scene("end", 2.4), end_wav))
+    _silence(end_wav, 1.2)
+    out.append((Scene("end", 1.2), end_wav))
     return out
 
 
@@ -441,16 +451,16 @@ def build(content, out_mp4, work, cards_dir=None):
     parts = []
     for i, (sc, wav) in enumerate(scenes):
         p = os.path.join(work, f"seg{i:02d}.wav")
-        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", wav, "-af", f"apad=whole_dur={sc.dur:.3f}",
+        subprocess.run([FF, "-y", "-loglevel", "error", "-i", wav, "-af", f"apad=whole_dur={sc.dur:.3f}",
                         "-t", f"{sc.dur:.3f}", "-ar", "44100", "-ac", "1", p], check=True)
         parts.append(p)
     lst = os.path.join(work, "list.txt")
     open(lst, "w").write("".join(f"file '{os.path.abspath(p)}'\n" for p in parts))
     audio = os.path.join(work, "voice.wav")
-    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", lst, "-c", "copy",
+    subprocess.run([FF, "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", lst, "-c", "copy",
                     audio], check=True)
     total = sum(sc.dur for sc, _ in scenes)
-    enc = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
+    enc = subprocess.Popen([FF, "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
                             "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-", "-i", audio,
                             "-af", "loudnorm=I=-15:TP=-1.5", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
                             "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k", "-shortest",
