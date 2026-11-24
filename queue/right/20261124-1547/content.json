@@ -1,0 +1,262 @@
+{
+ "date": "2026-11-24",
+ "code": "LHBUY",
+ "channel": "right",
+ "cards": [
+  {
+   "type": "cover",
+   "kicker": "부동산 · 국무회의",
+   "title": [
+    "사줄 테니",
+    "지어라?"
+   ],
+   "sub": "LH 매입확약으로 착공 유도\n미착공 21만9000호 국토부 추정",
+   "sticker": [
+    "매입",
+    "확약",
+    "LH"
+   ],
+   "photo_subject": "이재명",
+   "photo_query": "Lee Jae-myung",
+   "photo": {
+    "path": "photo0.jpg",
+    "credit": "Photo: KOREA.NET / CC BY-SA 2.0",
+    "title": "President Lee leaves for Canada for G7 (President Lee Jae-myung will attend the ",
+    "mode": "color",
+    "cy": 0.35
+   }
+  },
+  {
+   "type": "story",
+   "title": "국무회의 발언",
+   "body": [
+    "이재명 대통령은 24일 국무회의에서 분양 불안 탓에 건설사가 **착공을 미룰 수 있다**고 보고 LH 매입확약 추진 상황을 점검했어요.",
+    "분양 걱정 말고 지으라는 취지로 정부 **매입 확약**을 통한 착공 유도를 주문했다고 보도됐어요(이데일리, 뉴스핌, 파이낸셜뉴스)."
+   ],
+   "note": {
+    "label": "국토부 설명",
+    "text": "LH와 매입확약을 맺고 PF 어려움도 풀면 **조기 착공**이 가능하다는 설명이에요."
+   },
+   "sources": [
+    "이데일리",
+    "뉴스핌",
+    "파이낸셜뉴스"
+   ],
+   "photo_subject": "청와대",
+   "photo_query": "Cheong Wa Dae",
+   "photo": {
+    "path": "photo1.jpg",
+    "credit": "Photo: 문화체육관광부 해외문화홍보원 코리아넷 전한 / CC BY-SA 2.0",
+    "title": "File:CheongWaDae 20220407 05.jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "numbers",
+   "title": "숫자로 보는 구상",
+   "items": [
+    {
+     "value": "21.9만",
+     "label": "인허가 받고도\n미착공 주택(호)"
+    },
+    {
+     "value": "3.8만",
+     "label": "민간·지방공사\n택지 미착공(호)"
+    },
+    {
+     "value": "85~89%",
+     "label": "검토 중인\n매입가격 수준"
+    },
+    {
+     "value": "11.26",
+     "label": "세부 방안\n공개 예정일"
+    }
+   ],
+   "sources": [
+    "이데일리",
+    "뉴스핌",
+    "파이낸셜뉴스"
+   ],
+   "photo_subject": null,
+   "photo_query": null
+  },
+  {
+   "type": "story",
+   "title": "어떻게 사주나",
+   "body": [
+    "국토부는 사전 감정평가와 예상 분양가를 바탕으로 미분양률에 따라 **매입가격을 85~89%** 선에서 정하는 방안을 마련 중이라고 이데일리가 전했어요.",
+    "내년 상반기에 착공하는 사업장에는 매입가를 높여주는 **인센티브**도 검토 중이에요. 필요한 예산 규모는 보도에서 확인되지 않았어요."
+   ],
+   "note": {
+    "label": "대통령 언급",
+    "text": "업계의 **‘안 사주면 어떡하나’** 불안을 풀어야 한다는 취지로 말했어요."
+   },
+   "sources": [
+    "이데일리",
+    "뉴스핌",
+    "파이낸셜뉴스"
+   ],
+   "photo_subject": "한국토지주택공사",
+   "photo_query": "Korea Land and Housing Corporation",
+   "photo": {
+    "path": "photo3.jpg",
+    "credit": "Photo: Narubaru7 / CC BY-SA 4.0",
+    "title": "File:한국토지주택공사(LH) 인천지역본부 2024.jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "timeline",
+   "title": "공적 매입 구상",
+   "items": [
+    {
+     "date": "2025.12",
+     "text": "대통령, LH 매입임대 고가매입 의혹 **조사 지시** 보도"
+    },
+    {
+     "date": "10월 말",
+     "text": "대통령, 미분양 매입확약 **검토 지시**(국토부 설명)"
+    },
+    {
+     "date": "11.3",
+     "text": "국무회의서 집값 급락 시 **대량 매입** 대비책 언급"
+    },
+    {
+     "date": "11.24",
+     "text": "국무회의서 매입확약 점검, **착공 유도** 주문"
+    },
+    {
+     "date": "11.26",
+     "text": "정례브리핑에서 **세부 방안** 공개 예정"
+    }
+   ],
+   "sources": [
+    "뉴시스",
+    "한국경제",
+    "파이낸셜뉴스",
+    "이데일리",
+    "뉴스핌"
+   ],
+   "photo_subject": null,
+   "photo_query": null,
+   "photo": {
+    "path": "photo4.jpg",
+    "credit": "Photo: Narubaru7 / CC BY-SA 4.0",
+    "title": "File:한국토지주택공사(LH) 인천지역본부 외관 2024.jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "debate",
+   "title": "쟁점은 신뢰와 돈",
+   "lead": "정부는 착공 유도를 내세우고, 재원과 손실 부담은 **아직 공개 전**이에요.",
+   "left": {
+    "label": "정부 설명",
+    "points": [
+     "분양·PF 위험 덜어 착공 유도",
+     "수도권 공급 공백 축소 기대"
+    ]
+   },
+   "right": {
+    "label": "남은 질문",
+    "points": [
+     "LH 매입 재원은 어디서 나오나",
+     "하락장 미분양 손실은 누가 지나"
+    ]
+   },
+   "foot": "3일 집값 하락·대량 매입 발언에는 국민의힘 의원들이 비판했다고 보도됐어요. 이번 발언에 대한 공식 입장은 아직 확인하지 못했어요.",
+   "sources": [
+    "이데일리",
+    "뉴스핌",
+    "한국경제"
+   ],
+   "photo_subject": "국토교통부",
+   "photo_query": "Ministry of Land, Infrastructure and Transport",
+   "photo": {
+    "path": "photo5.jpg",
+    "credit": "Photo: Minseong Kim / CC BY-SA 4.0",
+    "title": "File:Ministry of Land, Infrastructure, and Transport(South Korea).JPG",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "outro",
+   "big": "11.26",
+   "title": "다음에 볼 것\n매입확약 세부안",
+   "body": "국토부는 26일 정례브리핑에서 세부 방안을 밝힐 예정이에요. **매입가 비율과 재원**, 대상 물량이 관전 포인트예요.",
+   "punch": "집값 떨어질 땐 공공이 사준다는 건데, 손실은 누가 지는지 먼저 밝혀야 하지 않나.",
+   "opinion": "건설사의 분양 부담을 LH가 나눠 지면 그 위험이 공공 재정으로 옮겨갈 수 있어 보여요. 매입가와 재원, 손실 책임 범위를 투명하게 밝혀야 한다고 생각해요.",
+   "sources": [
+    "이데일리",
+    "뉴스핌",
+    "파이낸셜뉴스"
+   ],
+   "photo": {
+    "path": "photo6.jpg",
+    "credit": "Photo: Seoul Institute / CC BY 4.0",
+    "title": "File:Government Complex Seoul Main Building.jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  }
+ ],
+ "reel": {
+  "hook": "사줄 테니 지어라, 진짜?",
+  "lines": [
+   {
+    "say": "24일 국무회의에서 대통령이 분양 걱정 없이 착공하도록 LH 매입확약을 점검하고 주문했다고 해요.",
+    "show": {
+     "type": "word",
+     "label": "국무회의 발언",
+     "text": "사줄 테니\n지어라"
+    }
+   },
+   {
+    "say": "내 눈엔 건설사의 분양 부담을 공공이 나눠 지겠다는 걸로 보여요.",
+    "show": {
+     "type": "opinion",
+     "tag": "1",
+     "text": "분양 부담\n공공이 분담"
+    }
+   },
+   {
+    "say": "국토부 추정으로 인허가 받고도 안 지은 주택이 약 21만9000호이고, 매입가는 85~89%로 검토 중이에요.",
+    "show": {
+     "type": "number",
+     "label": "인허가 후 미착공",
+     "value": "21.9",
+     "unit": "만호"
+    }
+   },
+   {
+    "say": "대통령은 업계의 ‘안 사주면 어떡하나’ 불안을 풀어야 한다고 했고, 재원 규모는 아직 확인된 게 없어요.",
+    "show": {
+     "type": "vs",
+     "a": [
+      "정부",
+      "매입가 85~89%"
+     ],
+     "b": [
+      "재원",
+      "규모 미확인"
+     ]
+    }
+   },
+   {
+    "say": "내 해석엔 건설사 위험을 LH가 안으면 하락장 손실이 세금 부담으로 이어질 수 있어 보여요.",
+    "show": {
+     "type": "opinion",
+     "tag": "2",
+     "text": "건설사 위험\n공공 재정으로"
+    }
+   }
+  ],
+  "teaser": "하락 부담, 누가 지나",
+  "yt_title": "'사줄 테니 지어라' 대통령 발언, 미분양 부담 누가 지나?",
+  "comment": "집값 하락기에 LH가 미분양을 사주는 정책, 찬성하시나요 반대하시나요? 👇"
+ }
+}

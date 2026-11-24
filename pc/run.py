@@ -326,7 +326,7 @@ def recent_photo_hashes(cid, n=30):
     return out
 
 
-def drop_repeats(cands, cid, keep=24, need=8, thr=34):
+def drop_repeats(cands, cid, keep=28, need=8, thr=34):
     """최근에 쓴 사진·후보끼리 겹치는 사진을 뒤로 보낸다. 새 사진이 need장 미만일 때만 옛 사진으로 채운다."""
     recent = recent_photo_hashes(cid)
     fresh, stale, seen = [], [], []
@@ -340,11 +340,38 @@ def drop_repeats(cands, cid, keep=24, need=8, thr=34):
         dist = min((_hd(h, x) for x in recent), default=999)
         (stale if dist <= thr else fresh).append((dist, c))
     stale.sort(key=lambda x: -x[0])                      # 덜 비슷한 것부터
-    out = [c for _, c in fresh][:keep]
+    base = [c for _, c in fresh if not c.get("ctx")]
+    ctx = [c for _, c in fresh if c.get("ctx")]
+    out = base[:keep - 10] + ctx[:10]                    # 맥락 사진 자리를 따로 남겨 둠
+    out += [c for c in base[keep - 10:]][:max(0, keep - len(out))]
     if len(out) < need:
         out += [c for _, c in stale][:need - len(out)]
     log(f"사진 중복 걸러냄: 새 사진 {len(fresh)}장 / 최근에 쓴 것과 비슷해서 뺀 것 {len(stale)}장 → 후보 {len(out)}장")
     return out
+
+
+CTX_MAP = [
+    (("국회", "탄핵", "청문회", "법안", "본회의", "의원", "여야"), ["South Korea National Assembly plenary hall", "National Assembly Building Yeouido", "Korean National Assembly hearing"]),
+    (("대법원", "법원", "판결", "재판", "선고", "사법부", "법관", "대법관"), ["Supreme Court of Korea building Seocho", "Seoul Central District Court", "Constitutional Court of Korea"]),
+    (("대통령실", "청와대", "대통령", "국무회의"), ["Cheong Wa Dae Seoul", "Presidential Office Seoul South Korea", "Korean cabinet meeting"]),
+    (("장관", "총리", "정부", "부처", "정책"), ["Government Complex Seoul", "Government Complex Sejong", "Prime Minister of South Korea office"]),
+    (("국민의힘", "장동혁", "한동훈", "보수", "윤리위"), ["People Power Party Korea", "People Power Party headquarters Yeouido", "국민의힘 당사"]),
+    (("민주당", "더불어민주당", "정청래", "이재명"), ["Democratic Party of Korea headquarters", "더불어민주당 당사", "Democratic Party of Korea press conference"]),
+    (("검찰", "법무", "특검", "수사", "공소"), ["Supreme Prosecutors' Office Seoul", "Ministry of Justice Gwacheon", "Seoul Central District Prosecutors Office"]),
+    (("국방", "군용기", "미사일", "북한", "KADIZ", "러시아", "경계경보"), ["Ministry of National Defense South Korea", "Republic of Korea Air Force", "Korean demilitarized zone"]),
+    (("증시", "코스피", "금리", "환율", "경제"), ["Korea Exchange Seoul", "Bank of Korea headquarters", "KOSPI trading floor"]),
+    (("수능", "교육", "입시", "대입"), ["Suneung exam South Korea", "Ministry of Education Sejong", "Korean high school exam"]),
+]
+
+
+def context_queries(post, maxq=5):
+    txt = json.dumps({"t": post.get("topic"), "c": post.get("cards")}, ensure_ascii=False)
+    scored = sorted(((sum(txt.count(k) for k in keys), qs) for keys, qs in CTX_MAP), key=lambda x: -x[0])
+    out = []
+    for sc, qs in scored:
+        if sc > 0:
+            out += qs
+    return list(dict.fromkeys(out))[:maxq]
 
 
 def gather_photos(post, work, cid=None):
@@ -402,6 +429,23 @@ def gather_photos(post, work, cid=None):
                 c["path"] = path
                 cands.append(c)
         time.sleep(1)
+    # ④ 맥락 사진: 인물 사진이 없어도 '그 사건의 무대'(국회·법원·청사 등) 사진을 서로 다른 것으로 여러 장 확보
+    n_ctx0 = len(cands)
+    for q in context_queries(post):
+        try:
+            for c in commons.search(q, limit=6)[:5]:
+                if c["title"] in seen or len(cands) >= 44:
+                    continue
+                seen.add(c["title"])
+                path = commons.download(c)
+                if path:
+                    c["path"] = path
+                    c["ctx"] = True
+                    cands.append(c)
+        except Exception as e:
+            log(f"맥락 사진 찾기 실패({q}): {e}")
+        time.sleep(1)
+    log(f"맥락 사진(기관·장소) {len(cands) - n_ctx0}장 추가")
     if len(cands) < 4:
         for q in queries[:2]:
             for c in pexels.search(q, 3):
@@ -442,11 +486,11 @@ def pick_photos(post, cands, work):
                       f" — 사진 대상: {c.get('photo_subject')} / 검색어: {c.get('photo_query')}"
                       for i, c in enumerate(post["cards"], 1))
     cand = "\n".join(f"{i}: " + (f"위키백과 '{c['wiki']}' 문서 사진{'(대표 사진)' if c.get('lead') else ''}" if c.get('wiki')
-                                 else ('코리아넷 정부 현장 사진' if c.get('koreanet') else
+                                 else ('맥락 사진(기관·장소)' if c.get('ctx') else '코리아넷 정부 현장 사진' if c.get('koreanet') else
                                        ('stock(Pexels)' if c.get('stock') else 'wikimedia 검색')))
                      + f" / {c['title'][:70]} / {c.get('desc', '')[:80]}"
                      for i, c in enumerate(cands, 1))
-    res = claude_json(prompts.PICK.format(sheet=sheet, topic=post["topic"], cards=cards, cand=cand),
+    res = claude_json(prompts.PICK.format(sheet=sheet, topic=post["topic"], cards=cards, cand=cand, n=len(post["cards"])),
                       tools="Read", max_turns=6, timeout=600)
     return {int(k): int(v) for k, v in res.items() if v}
 

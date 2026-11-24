@@ -417,6 +417,19 @@ def plan(content, R, work):
     if hook:
         dur, words, wav = tts(hook, os.path.join(work, "a00.mp3"), "+6%")
         out.append((Scene("hook", dur + 0.3, words), wav))
+    # 중간 장면 배경 사진: 카드에 붙은 서로 다른 사진을 순서대로(같은 사진이 연달아 나오지 않게)
+    pcs = [i for i, c in enumerate(content["cards"]) if c.get("photo") and c["photo"].get("path")
+           and os.path.exists(c["photo"]["path"])]
+    seq = [i for i in pcs if i != pcs[0]] or pcs if pcs else []
+    ptr = [0]
+
+    def _bg():
+        if not seq:
+            return None
+        v = seq[ptr[0] % len(seq)]
+        ptr[0] += 1
+        return v
+
     tz = P.clean(reel.get("teaser") or "")
     if tz:                                    # 결론 예고: 결론을 한 구절로 먼저 던진다
         ws, row = tz.split(), []
@@ -427,11 +440,13 @@ def plan(content, R, work):
             row.append(w_)
         rows.append(" ".join(row))
         dur, words, wav = tts("결론부터 말하면, " + tz, os.path.join(work, "a0t.mp3"), "+6%")
-        out.append((Scene("line", dur + 0.3, words, show={"type": "word", "label": "결론부터", "text": "\n".join(rows[:2])},
+        out.append((Scene("line", dur + 0.3, words, show=dict({"type": "word", "label": "결론부터", "text": "\n".join(rows[:2])}, **({"bg_photo": _bg()} if seq else {})),
                           zin=True), wav))
     for i, ln in enumerate(reel.get("lines") or []):
         say, show = (ln.get("say", ""), ln.get("show")) if isinstance(ln, dict) else (ln, None)
         show = show or _auto_show(i, R)
+        if seq and show.get("type") in ("word", "number", "ratio", "date") and show.get("bg_photo") is None:
+            show = dict(show, bg_photo=_bg())
         dur, words, wav = tts(P.clean(say), os.path.join(work, f"a{i + 1:02d}.mp3"), "+6%")
         out.append((Scene("line", dur + 0.35, words, show=show, zin=i % 4 < 2), wav))
     punch = P.clean(content["cards"][-1].get("punch") or "")
