@@ -1,0 +1,203 @@
+{
+ "date": "2026-11-24",
+ "code": "ULLEUNG",
+ "channel": "right",
+ "cards": [
+  {
+   "type": "cover",
+   "kicker": "안보 · 울릉 경계경보",
+   "title": [
+    "경계경보",
+    "문자 혼선"
+   ],
+   "sub": "러시아 군용기 접근에 울릉군 한때 경보\n해제 문자에 ‘북한 항공기’ 오기까지",
+   "sticker": [
+    "울릉",
+    "경보",
+    "혼선"
+   ],
+   "photo_subject": "울릉군",
+   "photo_query": "Ulleungdo island",
+   "photo": {
+    "path": "photo0.jpg",
+    "credit": "Photo: Gupdaal / CC BY 4.0",
+    "title": "File:Jeodong Fishing Port OCT2020.jpg",
+    "mode": "color",
+    "cy": 0.35
+   }
+  },
+  {
+   "type": "story",
+   "title": "24일 아침 무슨 일",
+   "body": [
+    "24일 오전 러시아 군용기 여러 대가 동해 **KADIZ**에 진입했고, 경북 울릉군에 한때 경계경보가 발령됐어요(세계일보·뉴스1).",
+    "군은 영공 침범은 없었다고 밝혔어요. 경보는 오전 7시 52분쯤 발령돼 7시 55분쯤 해제된 것으로 보도됐어요."
+   ],
+   "note": {
+    "label": "KADIZ란",
+    "text": "영공이 아니라 방공식별구역이라서 **진입이 곧 영공 침범은 아니에요**."
+   },
+   "sources": [
+    "세계일보",
+    "뉴스1",
+    "SBS"
+   ],
+   "photo_subject": "대한민국 공군",
+   "photo_query": "Republic of Korea Air Force fighter"
+  },
+  {
+   "type": "timeline",
+   "title": "경보 전후",
+   "items": [
+    {
+     "date": "오전 7:52",
+     "text": "울릉군에 **경계경보**·위급 문자 발송(행안부, 사유는 러시아 항공기 영공 침범)"
+    },
+    {
+     "date": "오전 7:55쯤",
+     "text": "경보 해제, 경북도 해제 문자에 **‘북한 항공기 추정 비행체’** 표기"
+    },
+    {
+     "date": "오전",
+     "text": "합참 ‘러시아 군용기 여러 대 KADIZ 진입, 영공 침범 없음’ 발표"
+    },
+    {
+     "date": "오전 8:39",
+     "text": "경북도 ‘러시아 항공기’로 바로잡는 정정 문자 발송"
+    }
+   ],
+   "sources": [
+    "세계일보",
+    "뉴스1",
+    "SBS"
+   ],
+   "photo_subject": "행정안전부",
+   "photo_query": "Ministry of the Interior and Safety Korea",
+   "photo": {
+    "path": "photo2.jpg",
+    "credit": "Photo: Seojoohyun / CC0",
+    "title": "File:정부세종청사 중앙동.jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "story",
+   "title": "문자 내용이 틀렸나",
+   "body": [
+    "SBS·오마이뉴스는 러시아 군용기가 접근했는데 해제 문자에 ‘북한 항공기’라고 나가 울릉 주민들이 혼란을 겪었다고 전했어요.",
+    "경북도 관계자는 훈련용 문구에 시간만 고쳐 잘못 보냈다고 설명했어요. 한편 행안부 문자는 영공 침범을 사유로 들었지만 군은 침범이 없었다고 밝혀 **표현이 엇갈렸어요**."
+   ],
+   "note": {
+    "label": "확인 필요",
+    "text": "**행안부 문구와 군 발표의 차이**에 대한 공식 설명은 아직 확인되지 않았어요."
+   },
+   "sources": [
+    "SBS",
+    "오마이뉴스"
+   ],
+   "photo_subject": "울릉군",
+   "photo_query": "Ulleung County Korea",
+   "photo": {
+    "path": "photo3.jpg",
+    "credit": "Photo: Gupdaal / CC BY 4.0",
+    "title": "File:Geobuk Bawi of Tonggumi Fishing Port OCT2020.jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "story",
+   "title": "수능 직후 장관 사의",
+   "body": [
+    "최교진 교육부 장관은 22일 수능 준비 과정의 혼란에 책임을 통감한다며 사의를 밝혔고, 대통령이 이를 수락했어요.",
+    "이번 울릉 경보 문자 혼선과는 별개의 사안이에요. 다만 두 사안 모두 정부 안내와 대응 체계가 주목받는 상황이에요."
+   ],
+   "note": {
+    "label": "관전 포인트",
+    "text": "**경북도와 행안부가 문자 경위를 어떻게 설명하는지**가 핵심이에요."
+   },
+   "sources": [
+    "한국경제",
+    "SBS"
+   ],
+   "photo_subject": "대한민국 국방부",
+   "photo_query": "Ministry of National Defense Korea",
+   "photo": {
+    "path": "photo4.jpg",
+    "credit": "Photo: U.S. Secretary of Defense / CC BY 2.0",
+    "title": "File:210317-D-BN624-1415 (51046418377).jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "outro",
+   "big": "경위설명",
+   "title": "다음에 볼 것\n문자 오류 원인",
+   "body": "경북도와 행안부, 군이 문자 문구가 어떻게 나갔는지, 문구 확인 절차에 문제가 없었는지 밝히는지가 관건이에요.",
+   "punch": "러시아 군용기인데 해제 문자엔 ‘북한 항공기’. 주민만 아침부터 헷갈렸다.",
+   "opinion": "러시아 군용기가 접근한 긴박한 순간에 주민에게 간 문자가 틀렸다면 가볍지 않은 문제라고 봐요. 훈련용 문구에 시간만 고쳐 보냈다는 설명이 나온 만큼 문구 확인 절차를 점검하고 재발 방지책을 내놓는 게 필요하다고 봐요.",
+   "sources": [
+    "세계일보",
+    "SBS",
+    "오마이뉴스"
+   ]
+  }
+ ],
+ "reel": {
+  "hook": "아침 울릉도에 경보가 울렸다",
+  "lines": [
+   {
+    "say": "24일 오전 러시아 군용기 여러 대가 동해 KADIZ에 들어왔고, 울릉군에 경계경보가 떴어요.",
+    "show": {
+     "type": "date",
+     "label": "경계경보 발령",
+     "value": "11.24",
+     "sub": "오전 7시 52분쯤"
+    }
+   },
+   {
+    "say": "내 눈엔 주민이 가장 먼저 믿는 게 문자인데, 그 문자가 틀렸다면 가볍게 넘길 일이 아니에요.",
+    "show": {
+     "type": "opinion",
+     "tag": "1",
+     "text": "주민이 믿는 건\n결국 문자 한 통"
+    }
+   },
+   {
+    "say": "행안부 문자는 영공 침범을 사유로 들었지만, 군은 영공 침범은 없었다고 밝혔어요.",
+    "show": {
+     "type": "vs",
+     "a": [
+      "행안부 문자",
+      "영공 침범 사유"
+     ],
+     "b": [
+      "군",
+      "영공 침범 없음"
+     ]
+    }
+   },
+   {
+    "say": "경북도 해제 문자에 ‘북한 항공기 추정’이 잘못 나갔고, 8시 39분쯤 정정 문자가 갔어요.",
+    "show": {
+     "type": "word",
+     "label": "경북도 해제 문자",
+     "text": "북한 항공기 추정\n→ 러시아 정정"
+    }
+   },
+   {
+    "say": "내 눈엔 훈련용 문구에 시간만 고쳐 보냈다는 설명이 나온 만큼, 문구 확인 절차부터 점검해야 해요.",
+    "show": {
+     "type": "opinion",
+     "tag": "2",
+     "text": "문구 확인 절차\n점검이 먼저"
+    }
+   }
+  ],
+  "teaser": "해제 문자가 틀렸다",
+  "yt_title": "울릉도 경계경보, 해제 문자에 '북한 항공기'? 문자 혼선",
+  "comment": "긴박한 순간에 경보 문자가 틀렸다면 누구 책임일까요? 여러분 생각은 어떠세요? 👇"
+ }
+}
