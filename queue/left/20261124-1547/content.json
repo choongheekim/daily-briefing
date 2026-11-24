@@ -1,0 +1,238 @@
+{
+ "date": "2026-11-24",
+ "code": "HONGJP",
+ "channel": "left",
+ "cards": [
+  {
+   "type": "cover",
+   "kicker": "정당 · 국민의힘 내부 비판",
+   "title": [
+    "판사 고발에",
+    "홍준표도 직격"
+   ],
+   "sub": "한덕수 1심 재판장 고발 추진에\n홍준표 전 시장이 비판하고 나섰어요",
+   "sticker": [
+    "고발",
+    "계엄",
+    "사과"
+   ],
+   "sources": [
+    "주간경향",
+    "뉴스1",
+    "경기일보"
+   ],
+   "photo_subject": "홍준표",
+   "photo_query": "Hong Joon-pyo",
+   "photo": {
+    "path": "photo0.jpg",
+    "credit": "Photo: 首相官邸ホームページ; uploaded by Garam / CC BY 4.0",
+    "title": "File:Shinzō Abe and Hong Jun-pyo at the Japanese Prime Minister's Office.jpg",
+    "mode": "color",
+    "cy": 0.35
+   }
+  },
+  {
+   "type": "story",
+   "title": "무슨 일이에요?",
+   "body": [
+    "국민의힘이 최고위원회의 뒤 이진관 판사를 **법왜곡죄로 고발**하는 방안을 추진하기로 했다고 보도됐어요. 홍준표 전 대구시장은 23일 페이스북에서 이를 비판했어요.",
+    "이 판사는 한덕수 전 총리 1심(징역 23년)을 맡은 재판장이에요. 홍 전 시장은 법왜곡죄가 사법권 독립을 침해하는 법이라고 지적하며 **12·3 계엄 2주년에 대국민 사과**부터 하라고 촉구했다고 해요."
+   ],
+   "note": {
+    "label": "확인 범위",
+    "text": "고발이 실제 접수됐다는 보도는 확인되지 않았어요. 추진 단계예요."
+   },
+   "sources": [
+    "주간경향",
+    "뉴스1",
+    "경기일보"
+   ],
+   "photo_subject": "이진관",
+   "photo_query": "Seoul Central District Court",
+   "photo": {
+    "path": "photo1.jpg",
+    "credit": "Photo: Wei-Te Wong / CC BY-SA 2.0",
+    "title": "File:Constitutional Court of Korea (2015).jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "timeline",
+   "title": "고발 논란 경과",
+   "items": [
+    {
+     "date": "11.17",
+     "text": "12월 3일 **국민주권의 날** 지정 개정안 입법예고 기간 마감(보도)"
+    },
+    {
+     "date": "11.19",
+     "text": "대법원, 김건희 '3대 의혹' 징역 4년 **확정**"
+    },
+    {
+     "date": "11.19",
+     "text": "대법원, 한덕수 사건 **파기환송**. 국민의힘은 판결 존중 입장"
+    },
+    {
+     "date": "11.23",
+     "text": "국민의힘, 이진관 판사 법왜곡죄 **고발 추진**"
+    },
+    {
+     "date": "11.23",
+     "text": "홍준표, 고발 추진 비판하며 **계엄 사과** 촉구"
+    }
+   ],
+   "sources": [
+    "뉴스1",
+    "법률신문",
+    "위키트리"
+   ],
+   "photo_subject": "국회의사당 (대한민국)",
+   "photo_query": "National Assembly Proceeding Hall",
+   "photo": {
+    "path": "photo2.jpg",
+    "credit": "Photo: 고려 / CC BY 4.0",
+    "title": "File:Hong Joon-pyo in Jamsil Saemaeul Market (3).jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "debate",
+   "title": "엇갈린 시선",
+   "lead": "판사 고발을 둘러싸고 **국민의힘 지도부와 홍 전 시장** 입장이 갈렸어요.",
+   "left": {
+    "label": "고발 추진 측",
+    "points": [
+     "한덕수 등 계엄 관련 1심을 맡은 점 등을 문제 삼는 입장",
+     "최고위에서 고발 필요성에 공감대가 있었다는 설명"
+    ]
+   },
+   "right": {
+    "label": "홍준표 측",
+    "points": [
+     "법왜곡죄로 판사를 고발하는 건 부적절하다는 취지",
+     "12·3 계엄에 대한 대국민 사과가 먼저"
+    ]
+   },
+   "foot": "고발 추진 측의 구체적 근거는 추가 확인이 필요해요.",
+   "sources": [
+    "주간경향",
+    "뉴스1",
+    "오마이뉴스"
+   ],
+   "photo_subject": "장동혁",
+   "photo_query": "Jang Dong-hyuk",
+   "photo": {
+    "path": "photo3.jpg",
+    "credit": "Photo: 고려 / CC BY 4.0",
+    "title": "File:Yoon Seok-youl, leave the main opposition People Power Party's headquarters",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "story",
+   "title": "왜 계엄 사과인가",
+   "body": [
+    "국민의힘은 대법원의 한덕수 판결에 존중한다는 입장을 밝혔지만, 12·3 계엄을 **내란으로 인정**하는지는 명확히 밝히지 않았다고 보도됐어요.",
+    "정부는 12월 3일을 **국민주권의 날**로 지정하는 규정 개정안을 입법예고했어요."
+   ],
+   "note": {
+    "label": "관전 포인트",
+    "text": "당 지도부가 홍 전 시장의 **사과 요구**에 어떻게 답할지가 쟁점이에요."
+   },
+   "sources": [
+    "위키트리",
+    "뉴스1"
+   ],
+   "photo_subject": "이재명",
+   "photo_query": "Lee Jae-myung",
+   "photo": {
+    "path": "photo4.jpg",
+    "credit": "Photo: KOREA.NET / CC BY-SA 2.0",
+    "title": "President Lee leaves for Canada for G7 (President Lee Jae-myung will attend the ",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "outro",
+   "big": "12.3",
+   "title": "다음에 볼 것\n계엄 사과 답변",
+   "body": "국민의힘 지도부가 홍 전 시장의 사과 요구와 판사 고발 추진에 어떤 입장을 낼지가 관건이에요. **12·3 국민주권의 날** 지정 절차도 이어져요.",
+   "punch": "판사 고발 검토할 시간에 계엄 사과부터 하세요. 홍준표까지 비판하는데, 계속 답을 피하실 건가요?",
+   "opinion": "사과 요구에는 답하지 않은 채 판사 고발부터 추진하는 건 책임을 피하려는 것처럼 보여요. 당 안팎에서 비판이 나온 만큼, 지도부는 고발 추진을 재검토하고 계엄 사과 여부를 밝혀야 한다고 봐요.",
+   "sources": [
+    "주간경향",
+    "뉴스1",
+    "오마이뉴스"
+   ]
+  }
+ ],
+ "reel": {
+  "hook": "홍준표가 당을 직격했다",
+  "lines": [
+   {
+    "say": "국민의힘이 한덕수 1심 재판장 이진관 판사 고발을 추진하기로 했다고 보도됐어요.",
+    "show": {
+     "type": "word",
+     "label": "사건",
+     "text": "판사\n고발 추진"
+    }
+   },
+   {
+    "say": "내 눈엔 판결이 마음에 안 든다고 판사부터 겨냥하는 걸로 보여요.",
+    "show": {
+     "type": "opinion",
+     "tag": "1",
+     "text": "판결 불만에\n판사 겨냥?"
+    }
+   },
+   {
+    "say": "홍준표 전 시장은 법왜곡죄로 판사를 고발하는 건 부적절하다며 12·3 계엄 사과를 촉구했어요.",
+    "show": {
+     "type": "vs",
+     "a": [
+      "국민의힘",
+      "판사 고발 추진"
+     ],
+     "b": [
+      "홍준표",
+      "고발 비판·사과"
+     ]
+    }
+   },
+   {
+    "say": "국민의힘은 대법원 판결을 존중한다고 했지만 내란 인정 여부는 명확히 밝히지 않았어요.",
+    "show": {
+     "type": "steps",
+     "label": "국힘 입장",
+     "items": [
+      [
+       "판결 존중",
+       "밝힘",
+       1
+      ],
+      [
+       "내란 인정",
+       "불명확",
+       0
+      ]
+     ]
+    }
+   },
+   {
+    "say": "내 눈엔 계엄 책임 논의를 피하려고 사법부로 시선을 돌리는 걸로 보여요.",
+    "show": {
+     "type": "opinion",
+     "tag": "2",
+     "text": "책임 회피용\n시선 돌리기?"
+    }
+   }
+  ],
+  "teaser": "고발보다 사과가 먼저",
+  "yt_title": "홍준표, 국힘 판사 고발 추진 비판…계엄 사과부터",
+  "comment": "판사 고발 추진 vs 계엄 사과 먼저, 여러분은 어느 쪽이 맞다고 보시나요? 👇"
+ }
+}
