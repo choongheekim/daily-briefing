@@ -1,0 +1,259 @@
+{
+ "date": "2026-11-26",
+ "code": "SELFSPEC",
+ "channel": "right",
+ "cards": [
+  {
+   "type": "cover",
+   "kicker": "국회 · 조작기소 특검",
+   "title": [
+    "특검 예산",
+    "322억 추산"
+   ],
+   "sub": "국민의힘 추천 없이 후보 2명이 나온 특검\n김재섭 의원은 '전부 무죄면 대통령 부담' 법안을 냈어요",
+   "sticker": [
+    "특검",
+    "비용",
+    "322억"
+   ],
+   "sources": [
+    "파이낸셜뉴스",
+    "뉴스토마토",
+    "국제뉴스"
+   ],
+   "photo_subject": "김재섭 (정치인)",
+   "photo_query": "Kim Jae-sub",
+   "photo": {
+    "path": "photo0.jpg",
+    "credit": "Photo: 고려 / CC BY 4.0",
+    "title": "File:Flower wreaths to express support for Prosecutor General Yoon Seok-youl sta",
+    "mode": "color",
+    "cy": 0.35
+   }
+  },
+  {
+   "type": "story",
+   "title": "후보 2명 추천",
+   "body": [
+    "26일 더불어민주당은 검사 출신 **이임성 변호사**를, 조국혁신당은 판사 출신 **이정훈 변호사**를 조작기소 특검 후보로 추천했어요.",
+    "국민의힘은 특검법 강행 처리에 반발해 앞서 후보를 **추천하지 않겠다**고 밝혔어요(한국일보·파이낸셜뉴스 보도)."
+   ],
+   "note": {
+    "label": "임명 절차",
+    "text": "특검법상 대통령이 3일 안에 1명을 임명해야 하고, 안 하면 연장자가 자동 임명된다고 아이뉴스24가 보도했어요. 매체별로 세부 설명은 조금 달라요."
+   },
+   "sources": [
+    "한국일보",
+    "파이낸셜뉴스",
+    "아이뉴스24"
+   ],
+   "photo_subject": "이재명",
+   "photo_query": "Lee Jae-myung",
+   "photo": {
+    "path": "photo1.jpg",
+    "credit": "Photo: Guro-gu, Seoul Public Relations Office / KOGL Type 1",
+    "title": "File:Guro-gu, Seoul mayor Lee Seong with Minister of Justice Kim Oh-soo.jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "profile",
+   "title": "특검 후보 2인",
+   "rows": [
+    [
+     "추천 정당",
+     "민주당 / 조국혁신당"
+    ],
+    [
+     "이임성",
+     "검사 출신 · 서울중앙지검 부부장"
+    ],
+    [
+     "이임성 현직",
+     "법조윤리협의회 위원장"
+    ],
+    [
+     "이정훈",
+     "판사 출신 · 20년 재직"
+    ],
+    [
+     "국민의힘",
+     "후보 추천 안 함"
+    ]
+   ],
+   "sources": [
+    "뉴스1",
+    "한국일보",
+    "아이뉴스24"
+   ],
+   "photo_subject": "국회의사당 (대한민국)",
+   "photo_query": "National Assembly Proceeding Hall"
+  },
+  {
+   "type": "story",
+   "title": "김재섭 법안",
+   "body": [
+    "국민의힘 김재섭 의원은 26일 특검법 개정안을 대표발의했어요. 특검이 기소한 사건이 **전부 무죄로 확정**되면 임명한 대통령이 수사·기소 비용을 국가에 내도록 하는 내용이에요.",
+    "감사원이 비용 산출 근거를 검증하고 법무부가 납부 기한을 통지하며, 퇴임 후에도 의무가 유지돼요. 김 의원은 대통령이 자신 관련 수사의 특검을 임명하는 구조에 이해충돌 소지가 있다고 주장하며 법안을 '셀프특검 국민세금보호법'이라 부르고 있어요."
+   ],
+   "note": {
+    "label": "현재 단계",
+    "text": "발의 단계이며 통과된 것이 아니에요. 법안 심사 경과는 아직 확인되지 않았어요."
+   },
+   "sources": [
+    "파이낸셜뉴스",
+    "신아일보",
+    "국제뉴스"
+   ],
+   "photo_subject": "김재섭 (정치인)",
+   "photo_query": "Kim Jae-sub lawmaker",
+   "photo": {
+    "path": "photo3.jpg",
+    "credit": "Photo: 고려 / CC BY 4.0",
+    "title": "File:Flower wreaths to express support for Prosecutor General Yoon Seok-youl sta",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "numbers",
+   "title": "숫자로 보는 특검",
+   "items": [
+    {
+     "value": "322억",
+     "label": "특검 예산\n추산(보도)"
+    },
+    {
+     "value": "3일",
+     "label": "대통령 임명\n기한"
+    },
+    {
+     "value": "2곳",
+     "label": "후보를 낸\n정당"
+    },
+    {
+     "value": "0명",
+     "label": "국민의힘\n추천 후보"
+    }
+   ],
+   "sources": [
+    "파이낸셜뉴스",
+    "뉴스토마토",
+    "한국일보"
+   ],
+   "photo_subject": null,
+   "photo_query": null
+  },
+  {
+   "type": "debate",
+   "title": "여야는 어떻게 보나",
+   "lead": "특검 후보 추천과 비용 부담법을 두고 양쪽 입장이 갈려요.",
+   "left": {
+    "label": "국민의힘",
+    "points": [
+     "특검법에 반발해 후보 추천 거부",
+     "김재섭 의원, 이해충돌 소지 주장하며 비용법 발의"
+    ]
+   },
+   "right": {
+    "label": "더불어민주당",
+    "points": [
+     "후보의 법조 경력과 신망 강조",
+     "조작수사 진상규명이 목적이라는 입장"
+    ]
+   },
+   "foot": "민주당은 이임성 후보를 두고 공정성을 뒷받침할 인물이라고 설명했어요. 김재섭 법안에 대한 여당 공식 반응은 아직 확인되지 않았어요.",
+   "sources": [
+    "한국일보",
+    "뉴스1",
+    "파이낸셜뉴스"
+   ],
+   "photo_subject": "정점식",
+   "photo_query": "Jeong Jeom-sik",
+   "photo": {
+    "path": "photo5.jpg",
+    "credit": "Photo: kemlu.go.id / Public domain",
+    "title": "File:Giving awards to 3 Indonesian citizens by the Minister of Justice of the Re",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "outro",
+   "big": "11.29",
+   "title": "다음에 볼 것\n특검 임명 시한",
+   "body": "26일 추천 이후 대통령이 3일 안에 임명하지 않으면 연장자가 자동 임명된다는 보도가 있어요. 김재섭 법안의 상임위 논의 여부도 지켜볼 대목이에요.",
+   "punch": "추천은 범여권 둘, 임명은 대통령. 이런 구조에서 비용 책임은 누가 지느냐는 질문이 나올 만해요.",
+   "opinion": "대통령 관련 사건이 걸린 특검을 국민의힘 추천 없이 꾸리는데, 예산은 수백억 원 규모로 추산돼요. 결과가 어떻든 비용 책임을 누가 지는지 불분명하다고 봐요. 김재섭 법안은 거칠다는 평가도 가능하지만, 특검 비용 책임을 묻는 문제의식 자체는 논의해 볼 만하다고 생각해요.",
+   "sources": [
+    "파이낸셜뉴스",
+    "한국일보",
+    "아이뉴스24",
+    "뉴스토마토",
+    "신아일보"
+   ]
+  }
+ ],
+ "reel": {
+  "hook": "특검 예산 322억 추산",
+  "lines": [
+   {
+    "say": "민주당이 검사 출신 이임성, 혁신당이 판사 출신 이정훈을 특검 후보로 냈어요.",
+    "show": {
+     "type": "vs",
+     "a": [
+      "민주당",
+      "이임성(검사)"
+     ],
+     "b": [
+      "혁신당",
+      "이정훈(판사)"
+     ]
+    }
+   },
+   {
+    "say": "내 눈엔 국민의힘 빠진 추천을 범여권끼리 정하는 모양새로 보여요.",
+    "show": {
+     "type": "opinion",
+     "tag": "1",
+     "text": "추천은 범여권\n임명은 대통령"
+    }
+   },
+   {
+    "say": "국민의힘은 추천을 거부했고, 김재섭 의원은 전부 무죄면 대통령이 비용을 내는 법안을 냈어요.",
+    "show": {
+     "type": "vs",
+     "a": [
+      "국민의힘",
+      "추천 거부·비용법"
+     ],
+     "b": [
+      "민주당",
+      "진상규명 강조"
+     ]
+    }
+   },
+   {
+    "say": "특검 예산은 약 322억 원으로 추산된다는 보도가 나왔고, 대통령은 3일 안에 임명해야 해요.",
+    "show": {
+     "type": "number",
+     "label": "특검 예산 추산(보도)",
+     "value": "322",
+     "unit": "억원"
+    }
+   },
+   {
+    "say": "내 눈엔 결과와 무관하게 비용 책임이 불분명한 구조가 문제로 보여요.",
+    "show": {
+     "type": "opinion",
+     "tag": "2",
+     "text": "책임은 불분명\n세금은 나간다"
+    }
+   }
+  ],
+  "teaser": "특검 비용, 누가 책임지나",
+  "yt_title": "특검 예산 322억 추산, 무죄면 대통령이 내라? 김재섭 법안",
+  "comment": "특검이 전부 무죄면 대통령이 비용을 내야 한다는 법안, 여러분은 찬성하시나요? 👇"
+ }
+}
