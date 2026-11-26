@@ -1,0 +1,219 @@
+{
+ "date": "2026-11-26",
+ "code": "HONAMCHIP",
+ "channel": "right",
+ "cards": [
+  {
+   "type": "cover",
+   "kicker": "경제 · 대미 관세",
+   "title": [
+    "美 관세 근거에",
+    "호남 반도체"
+   ],
+   "sub": "미국 무역대표부가 한국 과잉생산 근거로\n호남 반도체 클러스터를 언급했어요",
+   "sticker": [
+    "관세",
+    "호남",
+    "25%"
+   ],
+   "sources": [
+    "한국경제",
+    "뉴스1",
+    "데일리안"
+   ],
+   "photo_subject": "이재명",
+   "photo_query": "Lee Jae-myung",
+   "photo": {
+    "path": "photo0.jpg",
+    "credit": "Photo: Republic of Korea / CC BY-SA 4.0",
+    "title": "File:President Lee heads to Europe for G7 summit - 55323006892.jpg",
+    "mode": "color",
+    "cy": 0.35
+   }
+  },
+  {
+   "type": "story",
+   "title": "무슨 일이에요?",
+   "body": [
+    "미국 무역대표부(USTR)가 25일(현지시간) 무역법 301조 조사보고서를 공개했어요. 한국의 자동차·석유화학·반도체 등을 과잉생산 분야로 지목하며 과잉생산 관세의 근거를 담았다고 보도됐어요.",
+    "보고서는 약 800조 원 규모 기업 투자에 기반한 전남광주 **반도체 클러스터**를 생산능력 확대 정책의 대표 사례 중 하나로 꼽았어요(한국경제, 뉴스1 보도 기준)."
+   ],
+   "note": {
+    "label": "보도 기준",
+    "text": "세부 내용은 매체 보도 기준이며, 보고서 원문 확인이 더 필요해요."
+   },
+   "sources": [
+    "한국경제",
+    "뉴스1",
+    "한국일보"
+   ],
+   "photo_subject": "미국 무역대표부",
+   "photo_query": "Office of the United States Trade Representative",
+   "photo": {
+    "path": "photo1.jpg",
+    "credit": "Photo: Office of the United States Trade Representative / Public domain",
+    "title": "File:Joseph Barloon official 2025 portrait.jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "numbers",
+   "title": "숫자로 보는 관세",
+   "items": [
+    {
+     "value": "15%",
+     "label": "유지된\n합산 관세 상한"
+    },
+    {
+     "value": "25%",
+     "label": "협의 불만족 시\n검토 거론된 최대치"
+    },
+    {
+     "value": "800조",
+     "label": "호남 클러스터\n기업 투자 규모"
+    },
+    {
+     "value": "12.5%",
+     "label": "앞서 확정된\n강제노동 301조 관세"
+    }
+   ],
+   "sources": [
+    "뉴스1",
+    "아시아경제",
+    "뉴시스"
+   ],
+   "photo_subject": null,
+   "photo_query": null
+  },
+  {
+   "type": "story",
+   "title": "외압 논란의 뿌리",
+   "body": [
+    "지난 6월 호남 반도체 대규모 투자가 알려졌을 때 야권은 **특혜·외압** 논란을 제기했어요. 여권은 균형발전 차원이라고 맞섰어요(데일리안).",
+    "이재명 대통령은 당시 특정 지역 특혜가 아니라 국가 균형발전과 미래산업 경쟁력 확보를 위한 국가적 대의라는 취지로 설명했어요."
+   ],
+   "note": {
+    "label": "이번 보고서",
+    "text": "미국 보고서가 대통령이 SK하이닉스 등에 국내 생산 확대를 압박한다고 지적했다고 보도됐어요."
+   },
+   "sources": [
+    "데일리안",
+    "한국경제",
+    "뉴스1"
+   ],
+   "photo_subject": "국민의힘",
+   "photo_query": "People Power Party",
+   "photo": {
+    "path": "photo3.jpg",
+    "credit": "Photo: 고려 / CC BY 4.0",
+    "title": "File:Yoon Seok-youl, leave the main opposition People Power Party's headquarters",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "debate",
+   "title": "정부 vs 야권",
+   "lead": "미국이 호남 클러스터를 언급하자 정치적 책임 공방이 이어질 전망이에요.",
+   "left": {
+    "label": "국민의힘",
+    "points": [
+     "입지 결정이 정략적이라는 주장",
+     "대통령 유도가 사실상 압박이라는 주장"
+    ]
+   },
+   "right": {
+    "label": "정부·여당",
+    "points": [
+     "특정 지역 특혜가 아니라는 입장",
+     "국가 균형발전·전국 단위 전략"
+    ]
+   },
+   "foot": "이번 공방은 보도로 확인된 과거 발언을 바탕으로 정리한 것이며, 오늘 정부의 공식 반응은 추가 확인이 필요해요.",
+   "sources": [
+    "데일리안",
+    "한국경제",
+    "뉴스1"
+   ],
+   "photo_subject": null,
+   "photo_query": "National Assembly Proceeding Hall",
+   "photo": {
+    "path": "photo4.jpg",
+    "credit": "Photo: Cjb8293 / CC BY-SA 4.0",
+    "title": "File:Republic of Korea capitol.jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "outro",
+   "big": "15%",
+   "title": "다음에 볼 것\n한미 관세 협의",
+   "body": "미국은 기존 15% 상한은 유지하되, 협의나 약속 이행이 만족스럽지 않다고 판단하면 최대 25% 관세를 검토하겠다고 밝혔다고 보도됐어요. 의견 수렴을 거쳐 내년 확정될 예정이라 한국 정부의 대응이 관전 포인트예요.",
+   "punch": "미국이 호남 반도체를 관세 근거로 들었다. 입지 논란의 책임, 누가 설명할 건가?",
+   "opinion": "산업 입지는 전력·인력·공급망으로 정하는 게 바람직한데, 정치 논리가 끼어들었다는 논란이 있었어요. 관세가 25%로 오르면 수출 기업이 비용을 떠안을 수 있어요. 정부는 압박 지적에 분명히 해명하고 협상 결과를 투명하게 공개해야 한다고 봐요.",
+   "sources": [
+    "뉴스1",
+    "한국경제",
+    "아시아경제",
+    "헤럴드경제"
+   ]
+  }
+ ],
+ "reel": {
+  "hook": "미국이 호남 반도체를 지목했다",
+  "lines": [
+   {
+    "say": "미국 무역대표부가 301조 보고서에서 호남 반도체 클러스터를 생산능력 확대 사례로 들었다고 보도됐어요.",
+    "show": {
+     "type": "word",
+     "label": "USTR 보고서",
+     "text": "호남\n반도체"
+    }
+   },
+   {
+    "say": "내 눈엔, 입지 논란이 결국 관세 협상 부담으로 돌아온 걸로 보여요.",
+    "show": {
+     "type": "opinion",
+     "tag": "1",
+     "text": "정치 논리의\n청구서?"
+    }
+   },
+   {
+    "say": "미국은 15% 상한은 유지하되 최대 25% 검토를 밝혔고, 대통령은 앞서 특혜가 아니라 균형발전이라고 설명했어요.",
+    "show": {
+     "type": "vs",
+     "a": [
+      "미국",
+      "15% 유지, 최대 25%"
+     ],
+     "b": [
+      "정부",
+      "특혜 아닌 균형발전"
+     ]
+    }
+   },
+   {
+    "say": "클러스터에는 기업의 약 800조 원 투자가 걸려 있다고 보도됐어요.",
+    "show": {
+     "type": "number",
+     "label": "기업 투자 규모",
+     "value": "800",
+     "unit": "조 원"
+    }
+   },
+   {
+    "say": "내 생각엔, 관세가 오르면 수출 기업 부담이 커질 텐데 정부가 어떻게 설명할지 궁금해요.",
+    "show": {
+     "type": "opinion",
+     "tag": "2",
+     "text": "관세 부담은\n누구 몫?"
+    }
+   }
+  ],
+  "teaser": "관세 청구서가 날아왔다?",
+  "yt_title": "美가 호남 반도체를 콕 집었다, 관세 최대 25%?",
+  "comment": "반도체 입지에 정치가 개입했다는 논란, 여러분은 어떻게 보세요? 👇"
+ }
+}
