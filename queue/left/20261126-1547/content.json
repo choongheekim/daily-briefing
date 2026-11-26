@@ -1,0 +1,223 @@
+{
+ "date": "2026-11-26",
+ "code": "LAWBEND",
+ "channel": "left",
+ "cards": [
+  {
+   "type": "cover",
+   "kicker": "정치 · 내란특검 고발",
+   "title": [
+    "내란 재판 무죄 뒤",
+    "특검 고발 카드"
+   ],
+   "sub": "추경호 1심 무죄 8일 만에\n국민의힘이 특검을 법왜곡죄로 고발했어요",
+   "sticker": [
+    "고발",
+    "특검",
+    "법왜곡"
+   ],
+   "sources": [
+    "뉴스핌",
+    "뉴스1",
+    "파이낸셜뉴스"
+   ],
+   "photo_subject": "조은석",
+   "photo_query": "Cho Eun-suk special counsel",
+   "photo": {
+    "path": "photo0.jpg",
+    "credit": "Photo: 고려 / CC BY 4.0",
+    "title": "File:Flower wreaths to express support for Prosecutor General Yoon Seok-youl sta",
+    "mode": "color",
+    "cy": 0.35
+   }
+  },
+  {
+   "type": "timeline",
+   "title": "고발까지",
+   "items": [
+    {
+     "date": "9.30",
+     "text": "특검, 추경호 전 원내대표에 징역 20년 구형"
+    },
+    {
+     "date": "11.18",
+     "text": "1심, 추경호 대구시장 내란중요임무종사 혐의 **무죄**"
+    },
+    {
+     "date": "11.18",
+     "text": "정점식 원내대표, 특검 법왜곡죄 고발 검토 밝혀"
+    },
+    {
+     "date": "11.23",
+     "text": "국민의힘, 한덕수 1심 재판장 이진관 판사 고발 추진 밝혀"
+    },
+    {
+     "date": "11.25",
+     "text": "특검팀, 추경호 1심 판결에 **항소**"
+    },
+    {
+     "date": "11.26",
+     "text": "국민의힘, 조은석 내란특검 등을 **법왜곡죄로 고발**"
+    }
+   ],
+   "sources": [
+    "파이낸셜뉴스",
+    "아이뉴스24",
+    "뉴스핌"
+   ],
+   "photo_subject": "국민의힘",
+   "photo_query": "People Power Party",
+   "photo": {
+    "path": "photo1.jpg",
+    "credit": "Photo: 고려 / CC BY 4.0",
+    "title": "File:Flower wreaths to express support for Prosecutor General Yoon Seok-youl sta",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "story",
+   "title": "무엇을 고발했나",
+   "body": [
+    "국민의힘 법률자문위원회는 26일 추경호 대구시장 사건을 기소한 **조은석 내란특검**과 특검보·파견검사 등을 법왜곡 혐의로 서울경찰청에 고발했어요(뉴스핌·뉴스1).",
+    "국민의힘은 특검이 **핵심 증거를 고의로 숨겼다**고 주장해요. 법왜곡죄는 3월 12일 시행돼 시행 전 행위에 적용할 수 있는지가 쟁점이에요. 특검팀은 25일 항소했어요."
+   ],
+   "note": {
+    "label": "추경호 사건",
+    "text": "특검은 계엄 해제 표결을 막으려 의총 장소를 세 차례 바꿨다고 보고 기소했어요."
+   },
+   "sources": [
+    "뉴스핌",
+    "뉴스1"
+   ],
+   "photo_subject": "추경호",
+   "photo_query": "Choo Kyung-ho",
+   "photo": {
+    "path": "photo2.jpg",
+    "credit": "Photo: 광주광역시 / KOGL Type 1",
+    "title": "File:Choo Kyung-ho and Kang Gi-jung 20230714 (02).jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "debate",
+   "title": "여야 입장",
+   "lead": "1심 무죄를 두고 고발과 항소가 맞서고 있어요. 1심 판결은 항소심에서 다시 다뤄져요.",
+   "left": {
+    "label": "국민의힘",
+    "points": [
+     "정치적 목적의 기소라고 주장",
+     "핵심 증거를 고의로 숨겼다고 주장"
+    ]
+   },
+   "right": {
+    "label": "특검·여권",
+    "points": [
+     "특검, 25일 1심 항소",
+     "박주민 의원 등 항소 촉구"
+    ]
+   },
+   "foot": "국민의힘은 이진관 판사 고발 추진에 이어 이번에 특검까지 고발하며 재판 결과를 문제 삼고 있어요. 여권 쪽 반응은 기사별로 차이가 있어요.",
+   "sources": [
+    "뉴스핌",
+    "파이낸셜뉴스",
+    "아이뉴스24"
+   ],
+   "photo_subject": "정점식",
+   "photo_query": "Jeong Jeom-sik",
+   "photo": {
+    "path": "photo3.jpg",
+    "credit": "Photo: Lee Jae-Won / European Union, 2023 / EC - Audiovisual Servic / CC BY 4.0",
+    "title": "File:Choo Kyung-ho & Valdis Dombrovskis - 2023.jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "outro",
+   "big": "항소심",
+   "title": "다음에 볼 것\n항소심과 고발 수사",
+   "body": "특검팀이 항소해 추경호 사건은 항소심에서 다시 다뤄져요. 경찰의 고발 수사 착수 여부와 법왜곡죄 소급 적용 논란이 관전 포인트예요.",
+   "punch": "1심 무죄가 확정도 아닌데 판사와 특검을 잇달아 고발하는 순서, 의아하다는 시선이 나와요.",
+   "opinion": "1심 무죄는 확정이 아니고 특검이 항소했어요. 재판장과 특검을 잇달아 고발하는 건 재판에 부담을 주려는 것으로 보여요. 다만 고발은 정당한 법적 절차이기도 해서, 수사와 항소심 결과를 지켜봐야 한다고 봐요.",
+   "sources": [
+    "뉴스핌",
+    "파이낸셜뉴스",
+    "아이뉴스24"
+   ],
+   "photo_subject": null,
+   "photo_query": null
+  }
+ ],
+ "reel": {
+  "hook": "무죄 나오자 특검부터 고발?",
+  "lines": [
+   {
+    "say": "국민의힘이 26일, 추경호 시장을 기소한 조은석 내란특검 등을 법왜곡죄로 고발했어요.",
+    "show": {
+     "type": "word",
+     "label": "26일 고발",
+     "text": "특검\n법왜곡죄"
+    }
+   },
+   {
+    "say": "1심 무죄가 확정도 아닌데, 내 눈엔 고발부터 서두르는 순서가 의아해요.",
+    "show": {
+     "type": "opinion",
+     "tag": "1",
+     "text": "항소심 전\n고발 먼저?"
+    }
+   },
+   {
+    "say": "국민의힘은 핵심 증거를 고의로 숨겼다고 주장하고, 특검팀은 25일 1심 판결에 항소했어요.",
+    "show": {
+     "type": "vs",
+     "a": [
+      "국민의힘",
+      "증거 은닉 주장"
+     ],
+     "b": [
+      "특검",
+      "25일 항소"
+     ]
+    }
+   },
+   {
+    "say": "앞서 한덕수 1심 재판장 고발 추진에 이어, 재판 결과를 문제 삼은 고발이 이어지고 있어요.",
+    "show": {
+     "type": "steps",
+     "label": "이어지는 고발",
+     "items": [
+      [
+       "11.18",
+       "특검 고발 검토",
+       1
+      ],
+      [
+       "11.23",
+       "판사 고발 추진",
+       1
+      ],
+      [
+       "11.26",
+       "특검 고발",
+       1
+      ]
+     ]
+    }
+   },
+   {
+    "say": "이건 내 해석인데, 항소심을 앞두고 재판에 부담을 주려는 것으로 보여요.",
+    "show": {
+     "type": "opinion",
+     "tag": "2",
+     "text": "항소심 앞둔\n압박 아닐까"
+    }
+   }
+  ],
+  "teaser": "무죄 뒤 고발, 압박일까?",
+  "yt_title": "추경호 무죄 뒤 조은석 특검 고발, 노림수는?",
+  "comment": "1심 무죄 뒤 특검 고발, 정당한 대응일까요 압박일까요? 👇"
+ }
+}
