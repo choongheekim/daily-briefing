@@ -1,0 +1,213 @@
+{
+ "date": "2026-11-27",
+ "code": "JONGBU",
+ "channel": "right",
+ "cards": [
+  {
+   "type": "cover",
+   "kicker": "경제 · 종합부동산세",
+   "title": [
+    "종부세 고지서",
+    "72.6만명 시대"
+   ],
+   "sub": "1년 새 18만7천명 늘고 개인 평균 약 199만원\n고지 인원의 63%가 서울이에요",
+   "sticker": [
+    "종부세",
+    "18.7만명",
+    "199만원"
+   ],
+   "sources": [
+    "세계일보",
+    "헤럴드경제"
+   ],
+   "photo_subject": "이재명",
+   "photo_query": "Lee Jae-myung",
+   "photo": {
+    "path": "photo0.jpg",
+    "credit": "Photo: InSapphoWeTrust from Los Angeles, California, USA / CC BY-SA 2.0",
+    "title": "File:Jamsil Apartment Complex Phase 5 (6196571900).jpg",
+    "mode": "color",
+    "cy": 0.35
+   }
+  },
+  {
+   "type": "numbers",
+   "title": "숫자로 보는 종부세",
+   "items": [
+    {
+     "value": "72.6만",
+     "label": "올해 주택분\n종부세 고지 인원"
+    },
+    {
+     "value": "18.7만",
+     "label": "지난해보다\n늘어난 인원"
+    },
+    {
+     "value": "34.5%",
+     "label": "고지 인원\n증가율"
+    },
+    {
+     "value": "약 199만",
+     "label": "개인 1인당\n평균 세액(원)"
+    }
+   ],
+   "sources": [
+    "세계일보",
+    "헤럴드경제"
+   ],
+   "photo_subject": null,
+   "photo_query": null
+  },
+  {
+   "type": "story",
+   "title": "한강벨트 직격",
+   "body": [
+    "올해 주택분 종부세 고지 인원은 72만6천명으로 지난해(54만명)보다 **18만7천명(34.5%)** 늘었다고 재정경제부가 26일 밝혔어요.",
+    "재경부는 올해 제도 변화 없이 시장 요인으로 늘었다고 분석했어요. 한강벨트에서는 작년의 **2~3배** 낸 사례도 있다는 보도가 나왔어요."
+   ],
+   "note": {
+    "label": "1인당 세액",
+    "text": "개인 납세자 1인당 평균 주택분 세액은 199만4천원으로 지난해보다 24.1% 늘었어요."
+   },
+   "sources": [
+    "세계일보",
+    "헤럴드경제",
+    "뉴데일리"
+   ],
+   "photo_subject": "서울특별시",
+   "photo_query": "Seoul Han River apartments",
+   "photo": {
+    "path": "photo2.jpg",
+    "credit": "Photo: Ox1997cow This photo was taken with Samsung Galaxy S8+ / CC BY 4.0",
+    "title": "File:Cheonggye Plaza 2021.jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "story",
+   "title": "국세청장 후보 논란",
+   "body": [
+    "안덕수 국세청장 후보자는 11월 26일 인사청문회에서 배우자 명의 서울 아파트에 거주하지 않은 **비거주 1주택** 논란에 사과했어요.",
+    "후보자는 국민 눈높이에 미흡했다는 취지로 밝혔고, 투기는 아니라는 입장이라고 보도됐어요."
+   ],
+   "note": {
+    "label": "맞물린 시점",
+    "text": "종부세 고지서 발송과 같은 시기에 국세청장 후보자 청문회가 열렸어요."
+   },
+   "sources": [
+    "네이트뉴스"
+   ],
+   "photo_subject": "국세청",
+   "photo_query": "National Tax Service Korea",
+   "photo": {
+    "path": "photo3.jpg",
+    "credit": "Photo: Taken by User:Visviva and released into the public domain. / Public domain",
+    "title": "File:Daegu Korea Bank.jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "debate",
+   "title": "세금 논쟁",
+   "lead": "국민의힘·개혁신당 수도권 의원 모임(수도권주거혁신포럼)은 11월 23일 정부 세법 개정안 **철회**를 요구했어요.",
+   "left": {
+    "label": "야당 수도권 의원",
+    "points": [
+     "종부세 실거주 차별 폐지 요구",
+     "공정시장가액비율 60% 유지 주장"
+    ]
+   },
+   "right": {
+    "label": "정부(재경부)",
+    "points": [
+     "올해 제도 변화 없이 시장 요인",
+     "개정안 추진 중"
+    ]
+   },
+   "foot": "정부·여당의 개정안 관련 구체적 반박은 확인하지 못해 재경부 분석 중심으로 정리했어요.",
+   "sources": [
+    "한국일보",
+    "뉴스웍스"
+   ],
+   "photo_subject": "국회의사당 (대한민국)",
+   "photo_query": "National Assembly Proceeding Hall",
+   "photo": {
+    "path": "photo4.jpg",
+    "credit": "Photo: Ministry of Communications, Republic of Korea; Take a Pictur / Public domain",
+    "title": "File:Build completion of National Assembly Building of South Korea anniversity s",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "outro",
+   "big": "12월",
+   "title": "다음에 볼 것\n세법 개정안 처리",
+   "body": "고지된 종부세는 12월 15일까지 내야 하고, 국회에서는 정부 세법 개정안 심사가 이어져요. 수정 여부가 관전 포인트예요.",
+   "punch": "집값 잡겠다더니 고지서가 먼저 왔다. 내 집 한 채 가진 국민에게 세금부터 내밀기 전에 답부터 내놔라.",
+   "opinion": "공시가격이 오르면 세 부담이 자동으로 늘어나는 구조에서 고지 인원이 약 19만명 늘었어요. 재경부는 시장 요인이라고 하지만, 실수요 1주택자의 부담은 따로 살펴야 한다고 봐요. 부담 완화책부터 논의하는 게 순서라고 봐요.",
+   "sources": [
+    "세계일보",
+    "헤럴드경제"
+   ]
+  }
+ ],
+ "reel": {
+  "hook": "종부세 대상 19만명 늘었다",
+  "lines": [
+   {
+    "say": "올해 종부세 고지 인원이 72만6천명으로, 1년 새 18만7천명 늘었어요.",
+    "show": {
+     "type": "number",
+     "label": "종부세 고지 인원",
+     "value": "72.6",
+     "unit": "만명"
+    }
+   },
+   {
+    "say": "내 눈엔 집값이 오른 만큼 세금 부담이 먼저 커진 걸로 보여요.",
+    "show": {
+     "type": "opinion",
+     "tag": "1",
+     "text": "집값 따라\n세금도 올랐다"
+    }
+   },
+   {
+    "say": "야당 수도권 의원들은 개정안 철회를 요구했고, 재경부는 시장 요인이라고 분석했어요.",
+    "show": {
+     "type": "vs",
+     "a": [
+      "야당 의원",
+      "개정안 철회 요구"
+     ],
+     "b": [
+      "재경부",
+      "제도 변화 없이 시장 요인"
+     ]
+    }
+   },
+   {
+    "say": "증가율은 34.5%, 개인 1인당 평균 세액은 약 199만원이에요.",
+    "show": {
+     "type": "ratio",
+     "label": "고지 인원 증가율 34.5%",
+     "part": 9,
+     "whole": 26
+    }
+   },
+   {
+    "say": "이건 해석인데, 공시가격이 오르면 세금이 자동으로 늘어나는 구조를 짚어봐야 해요.",
+    "show": {
+     "type": "opinion",
+     "tag": "2",
+     "text": "자동으로\n늘어나는 세금"
+    }
+   }
+  ],
+  "teaser": "세금이 먼저 오른다",
+  "yt_title": "종부세 72.6만명, 1년 새 18.7만명 늘었다… 집값 탓일까?",
+  "comment": "종부세 대상 급증, 정부 책임일까요 시장 요인일까요? 여러분 생각은요? 👇"
+ }
+}
