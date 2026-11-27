@@ -176,10 +176,28 @@ def claude(prompt: str, tools: str, max_turns: int = 40, timeout: int = 1500) ->
     return out.get("result", "")
 
 
+def _repair_quotes(t: str) -> str:
+    """문자열 안에 섞인 큰따옴표(\"소송\" 같은 것) 때문에 깨진 JSON을, 오류 위치의 따옴표를 하나씩 이스케이프해 복구한다."""
+    for _ in range(60):
+        try:
+            json.loads(t)
+            return t
+        except json.JSONDecodeError as e:
+            q = t.rfind('"', 0, e.pos)
+            if q < 0 or t[q - 1:q] == "\\":
+                raise
+            t = t[:q] + "\\" + t[q:]
+    return t
+
+
 def parse_json(text: str) -> dict:
     text = re.sub(r"^```(?:json)?|```$", "", text.strip(), flags=re.M).strip()
     s, e = text.find("{"), text.rfind("}")
-    return json.loads(text[s:e + 1])
+    body = text[s:e + 1]
+    try:
+        return json.loads(body)
+    except json.JSONDecodeError:
+        return json.loads(_repair_quotes(body))
 
 
 def claude_json(prompt: str, tools: str, **kw) -> dict:
@@ -563,15 +581,22 @@ def make_post(cid, slot, test):
     validate(post)
     log(f"[{cid}] 주제: {post['topic']} ({time.time() - t0:.0f}초)")
     t1 = time.time()
-    try:
-        checked = claude_json(prompts.FACT.format(now=datetime.now(KST).strftime("%Y-%m-%d %H:%M"),
-                                                  draft=json.dumps(post, ensure_ascii=False)),
-                              tools="WebSearch,WebFetch", max_turns=40)
-        validate(checked)
-        log(f"[{cid}] 사실 확인 완료({time.time() - t1:.0f}초): {checked.get('fact_notes', [])}")
-        post = checked
-    except Exception as e:
-        raise RuntimeError(f"사실 확인 단계 실패 → 이번 게시물은 건너뜀: {e}")
+    err = None
+    for attempt in (1, 2):                    # 사실 확인은 한 번 실패해도 통째로 한 번 더 시도
+        try:
+            checked = claude_json(prompts.FACT.format(now=datetime.now(KST).strftime("%Y-%m-%d %H:%M"),
+                                                      draft=json.dumps(post, ensure_ascii=False)),
+                                  tools="WebSearch,WebFetch", max_turns=40)
+            validate(checked)
+            log(f"[{cid}] 사실 확인 완료({time.time() - t1:.0f}초): {checked.get('fact_notes', [])}")
+            post = checked
+            err = None
+            break
+        except Exception as e:
+            err = e
+            log(f"[{cid}] 사실 확인 {attempt}번째 실패: {e}")
+    if err is not None:
+        raise RuntimeError(f"사실 확인 단계 실패 → 이번 게시물은 건너뜀: {err}")
 
     cands = gather_photos(post, work, cid)
     picks = pick_photos(post, cands, work)
