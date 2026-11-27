@@ -1,0 +1,312 @@
+{
+ "date": "2026-11-28",
+ "code": "SPECIAL",
+ "channel": "right",
+ "cards": [
+  {
+   "type": "cover",
+   "kicker": "국회 · 조작기소 특검",
+   "title": [
+    "내 사건 수사할",
+    "특검, 내가 뽑는다"
+   ],
+   "sub": "후보 2명 중 1명을 대통령이 3일 안에 임명해요\n이해충돌 논란을 8장으로 정리했어요",
+   "sticker": [
+    "특검",
+    "임명",
+    "논란"
+   ],
+   "sources": [
+    "법률신문",
+    "오마이뉴스",
+    "파이낸셜뉴스"
+   ],
+   "photo_subject": "이재명",
+   "photo_query": "Lee Jae-myung",
+   "photo": {
+    "path": "photo0.jpg",
+    "credit": "Photo: Republic of Korea from Seoul, Republic of Korea / CC BY-SA 4.0",
+    "title": "File:11th Cabinet meeting of 2026 (55167286235).jpg",
+    "mode": "color",
+    "cy": 0.35
+   }
+  },
+  {
+   "type": "profile",
+   "title": "특검 후보는 누구?",
+   "rows": [
+    [
+     "추천",
+     "민주당 이임성 · 혁신당 이정훈"
+    ],
+    [
+     "이임성",
+     "검사 출신 변호사"
+    ],
+    [
+     "경력",
+     "서울중앙지검 부부장 · 2009년부터 변호사"
+    ],
+    [
+     "이정훈",
+     "판사 출신 변호사"
+    ],
+    [
+     "경력",
+     "2018년 법원 퇴직 · 법무법인 지평 파트너"
+    ],
+    [
+     "국민의힘",
+     "후보 추천을 하지 않았어요"
+    ]
+   ],
+   "sources": [
+    "시사저널",
+    "뉴스1",
+    "법률신문"
+   ],
+   "photo_subject": null,
+   "photo_query": "Supreme Court of Korea",
+   "photo": {
+    "path": "photo1.jpg",
+    "credit": "Photo: 고려 / CC BY 4.0",
+    "title": "File:Flower wreaths to express support for Prosecutor General Yoon Seok-youl sta",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "timeline",
+   "title": "특검 임명까지",
+   "items": [
+    {
+     "date": "11.6",
+     "text": "조작기소 특검법 국회 본회의 통과"
+    },
+    {
+     "date": "11.19",
+     "text": "특검법 공포·**즉시 시행**"
+    },
+    {
+     "date": "11.23",
+     "text": "국민의힘 의원 109명, 헌재에 **권한쟁의심판** 청구"
+    },
+    {
+     "date": "11.26",
+     "text": "민주당 이임성, 혁신당 이정훈 **후보 추천**"
+    },
+    {
+     "date": "11.26",
+     "text": "국민의힘은 특검법에 반대하며 후보를 추천하지 않음"
+    },
+    {
+     "date": "11.29",
+     "text": "대통령 임명 시한(추천일부터 3일, 기사 기준 계산)"
+    }
+   ],
+   "sources": [
+    "법률신문",
+    "파이낸셜뉴스",
+    "오마이뉴스"
+   ],
+   "photo_subject": "국회의사당 (대한민국)",
+   "photo_query": "National Assembly Proceeding Hall",
+   "photo": {
+    "path": "photo2.jpg",
+    "credit": "Photo: 고려 / CC BY 4.0",
+    "title": "File:Flower wreaths to express support for Prosecutor General Yoon Seok-youl sta",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "story",
+   "title": "임명 구조의 쟁점",
+   "body": [
+    "대통령은 후보 추천을 받은 날부터 **3일 안에** 1명을 임명해야 해요. 기한을 넘기면 연장자인 이임성 변호사가 자동 임명되는 것으로 보도됐어요.",
+    "수사 대상은 12개 항목이고, 이 가운데 6건이 이재명 대통령 관련 사건이에요. 대통령이 자기 관련 사건을 수사할 특검을 임명하는 구조를 두고 이해충돌 논란이 제기됐어요."
+   ],
+   "note": {
+    "label": "수사 기간·인력",
+    "text": "준비 20일 포함 최장 **200일**, 최대 309명 규모라고 보도됐어요."
+   },
+   "sources": [
+    "투데이신문",
+    "법률신문"
+   ],
+   "photo_subject": "이재명",
+   "photo_query": "Yongsan Presidential Office",
+   "photo": {
+    "path": "photo3.jpg",
+    "credit": "Photo: Republic of Korea from Seoul, Republic of Korea / CC BY-SA 4.0",
+    "title": "File:11th Cabinet meeting of 2026 (55167060613).jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "numbers",
+   "title": "숫자로 보는 특검",
+   "items": [
+    {
+     "value": "2명",
+     "label": "추천된\n특검 후보"
+    },
+    {
+     "value": "3일",
+     "label": "대통령 임명\n시한"
+    },
+    {
+     "value": "12건",
+     "label": "수사 대상\n항목"
+    },
+    {
+     "value": "200일",
+     "label": "최장 수사\n기간"
+    }
+   ],
+   "sources": [
+    "투데이신문",
+    "법률신문"
+   ],
+   "photo_subject": null,
+   "photo_query": null
+  },
+  {
+   "type": "story",
+   "title": "국힘의 반발",
+   "body": [
+    "국민의힘 의원 109명이 지난 23일 헌재에 **권한쟁의심판**을 청구했어요. 4일 법사위와 6일 본회의 가결 선포로 심의·표결권이 침해됐다는 주장이에요.",
+    "안건조정위에서 표결 없이 이의 유무만 확인해 가결을 선포했다는 것이 청구 측 주장이에요. 특검법은 이미 19일 시행돼 청구만으로 효력이 멈추지는 않아요."
+   ],
+   "note": {
+    "label": "앞으로",
+    "text": "헌재 결정 전에도 **임명 절차는 진행**돼요. 인용 가능성은 낮다는 관측도 보도됐어요."
+   },
+   "sources": [
+    "파이낸셜뉴스",
+    "스타뉴스"
+   ],
+   "photo_subject": "국회의사당 (대한민국)",
+   "photo_query": "National Assembly Proceeding Hall",
+   "photo": {
+    "path": "photo5.jpg",
+    "credit": "Photo: Republic of Korea from Seoul, Republic of Korea / CC BY-SA 4.0",
+    "title": "File:11th Cabinet meeting of 2026 (55167286240).jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "debate",
+   "title": "여야는 어떻게 보나",
+   "lead": "국민의힘은 추천 없이 법 처리 절차를 문제 삼았고, 민주당·혁신당은 후보를 1명씩 추천했어요.",
+   "left": {
+    "label": "국민의힘",
+    "points": [
+     "대통령이 자기 사건 특검 임명은 이해충돌",
+     "처리 절차 문제로 헌재에 권한쟁의 청구"
+    ]
+   },
+   "right": {
+    "label": "민주당·혁신당",
+    "points": [
+     "민주당, 검사 출신 이임성 추천",
+     "혁신당, 판사 출신 이정훈 추천"
+    ]
+   },
+   "foot": "이임성 후보가 조희대 대법원장 탄핵 반대 성명에 이름을 올린 것으로 알려져 여권에서도 의외라는 반응이 나왔다고 보도됐어요.",
+   "sources": [
+    "오마이뉴스",
+    "시사저널",
+    "파이낸셜뉴스"
+   ],
+   "photo_subject": "국회의사당 (대한민국)",
+   "photo_query": "Democratic Party of Korea"
+  },
+  {
+   "type": "outro",
+   "big": "11.29",
+   "title": "다음에 볼 것\n대통령의 선택",
+   "body": "대통령 임명 시한은 추천일부터 3일로, 기사 기준 29일께예요. 헌재 권한쟁의심판 결과와 특검 인력 확보도 관전 포인트예요.",
+   "punch": "대통령 사건을 수사할 특검을 대통령이 고른다. 내 눈엔 심판이 선수를 고르는 것처럼 보여요.",
+   "opinion": "자기 사건을 수사할 특검을 당사자가 임명하는 구조는 이해충돌 소지가 크다고 봐요. 법명에 '조작'을 넣은 점도 수사 결론을 미리 정했다는 의심을 부를 수 있다고 느껴요. 대통령이 독립적 인선을 약속하면 논란을 줄일 수 있다고 봐요.",
+   "sources": [
+    "법률신문",
+    "파이낸셜뉴스",
+    "오마이뉴스"
+   ]
+  }
+ ],
+ "reel": {
+  "hook": "자기 수사할 특검, 본인이 뽑는다고?",
+  "lines": [
+   {
+    "say": "조작기소 특검 후보로 이임성, 이정훈 두 명이 추천됐고, 대통령이 3일 안에 한 명을 임명해야 해요.",
+    "show": {
+     "type": "steps",
+     "label": "특검 임명 절차",
+     "items": [
+      [
+       "11.26",
+       "후보 2명 추천",
+       1
+      ],
+      [
+       "3일 내",
+       "대통령 임명",
+       0
+      ],
+      [
+       "미임명",
+       "연장자 자동 임명",
+       0
+      ]
+     ]
+    }
+   },
+   {
+    "say": "내 눈엔 당사자가 수사 책임자를 고르는 구조가 공정한 출발인지 의문이 들어요.",
+    "show": {
+     "type": "opinion",
+     "tag": "1",
+     "text": "당사자가\n수사자를 고른다"
+    }
+   },
+   {
+    "say": "국민의힘은 후보를 추천하지 않고 헌재에 권한쟁의심판을 청구했고, 민주당은 검사 출신, 혁신당은 판사 출신을 추천했어요.",
+    "show": {
+     "type": "vs",
+     "a": [
+      "국민의힘",
+      "추천 없이 헌재 청구"
+     ],
+     "b": [
+      "민주당·혁신당",
+      "검사·판사 출신 추천"
+     ]
+    }
+   },
+   {
+    "say": "수사 대상은 12개 항목에 대통령 관련 6건이 포함되고, 기간은 최장 200일, 규모는 최대 309명으로 보도됐어요.",
+    "show": {
+     "type": "number",
+     "label": "특검 수사 대상 항목",
+     "value": "12",
+     "unit": "건"
+    }
+   },
+   {
+    "say": "내 눈엔 법명에 조작부터 넣은 점이 결론을 정해 둔 수사라는 의심을 부를 수 있어 보여요.",
+    "show": {
+     "type": "opinion",
+     "tag": "2",
+     "text": "이름부터\n의심 부른다"
+    }
+   }
+  ],
+  "teaser": "심판이 선수를 고르는 구조?",
+  "yt_title": "대통령이 자기 사건 특검을 직접 임명? 3일 시한",
+  "comment": "대통령이 자기 사건 수사할 특검을 임명하는 구조, 여러분은 괜찮다고 보시나요? 👇"
+ }
+}
