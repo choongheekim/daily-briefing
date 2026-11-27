@@ -1,0 +1,189 @@
+{
+ "date": "2026-11-27",
+ "code": "RAIDMOJ",
+ "channel": "right",
+ "cards": [
+  {
+   "type": "cover",
+   "kicker": "사법 · 경찰 압수수색",
+   "title": [
+    "법무부까지",
+    "압수수색"
+   ],
+   "sub": "한동훈 자료유출 의혹 수사로\n경찰이 법무부·공소청을 압수수색했어요",
+   "sticker": [
+    "압색",
+    "법무부",
+    "공소청"
+   ],
+   "sources": [
+    "파이낸셜뉴스",
+    "한국일보",
+    "세계일보"
+   ],
+   "photo_subject": "한동훈",
+   "photo_query": "Han Dong-hoon",
+   "photo": {
+    "path": "photo0.jpg",
+    "credit": "Photo: U.S. Department of Justice - International / Public domain",
+    "title": "File:Kenneth Polite and Jonathan Kanter met with Han Dong-hoon.jpg",
+    "mode": "color",
+    "cy": 0.35
+   }
+  },
+  {
+   "type": "story",
+   "title": "무슨 일이 있었나",
+   "body": [
+    "서울경찰청 광역범죄수사대가 27일 오전 김승원 전 법무부 장관 후보자 관련 **수사자료 유출 의혹**과 관련해 법무부·공소청·서울서부지방공소청 등에 대한 압수수색 영장을 집행했다고 보도됐어요. 적용 혐의는 공무상비밀누설이에요.",
+    "한 의원이 김승원 전 후보자 관련 **기소 계획서**를 공소청 내부 관계자로부터 넘겨받았다는 의혹이고, 경찰은 문서 취득에 공무원이 관여했는지 확인 중이에요. 한 의원은 압수수색 대상에 포함되지 않았어요."
+   ],
+   "note": {
+    "label": "수사 단계",
+    "text": "일부 매체는 영장 집행이 아니라 **임의 제출** 형태로 자료를 받는 것으로 보인다고 전했어요."
+   },
+   "sources": [
+    "파이낸셜뉴스",
+    "한국일보",
+    "세계일보",
+    "법률신문"
+   ],
+   "photo_subject": "서울경찰청",
+   "photo_query": "Seoul Metropolitan Police Agency",
+   "photo": {
+    "path": "photo1.jpg",
+    "credit": "Photo: hyolee2 / CC BY-SA 3.0",
+    "title": "File:Seoul Metropolitan Police Agency.JPG",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "story",
+   "title": "의혹의 배경",
+   "body": [
+    "더불어민주당은 지난 9월 한 의원을 공무상비밀누설 혐의 등으로 경찰에 **고발**했어요.",
+    "한 의원은 해당 자료를 **공익제보로 확보**했고 공개는 공익을 위한 것이었다고 주장하고 있어요."
+   ],
+   "note": {
+    "label": "확인 필요",
+    "text": "실제 유출 경로와 위법 여부는 **아직 확인된 바 없어요**."
+   },
+   "sources": [
+    "세계일보",
+    "서울신문",
+    "대전일보"
+   ],
+   "photo_subject": "법무부 (대한민국)",
+   "photo_query": "Ministry of Justice (South Korea)",
+   "photo": {
+    "path": "photo2.jpg",
+    "credit": "Photo: 최광모 / CC BY-SA 4.0",
+    "title": "File:Government Complex Gwacheon 5.jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "debate",
+   "title": "엇갈린 주장",
+   "lead": "압수수색을 두고 한동훈 의원과 수사 촉구 측의 주장이 갈려요.",
+   "left": {
+    "label": "한동훈 의원",
+    "points": [
+     "경찰이 민주당 편에 섰다고 비판",
+     "공익제보자 색출 시도라며 반발"
+    ]
+   },
+   "right": {
+    "label": "민주당 측",
+    "points": [
+     "수사자료 유출 의혹 규명 요구",
+     "자료 취득 경위를 밝혀야 한다는 입장"
+    ]
+   },
+   "foot": "한 의원은 공익제보자 색출이라며 반발하고, 민주당은 수사자료 취득·공개 경위를 따져야 한다는 입장이에요(서울신문·세계일보 보도 기준).",
+   "sources": [
+    "서울신문",
+    "세계일보",
+    "대전일보"
+   ],
+   "photo_subject": "한동훈",
+   "photo_query": "Han Dong-hoon",
+   "photo": {
+    "path": "photo3.jpg",
+    "credit": "Photo: Endearing9721 / CC0",
+    "title": "File:Seoul Central District Prosecutors' Office 2026.jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "outro",
+   "big": "수사",
+   "title": "다음에 볼 것\n압수물 분석 결과",
+   "body": "경찰이 확보한 자료와 접속 기록으로 **유출 경로와 관여자**가 특정될지가 관전 포인트예요. 아직 혐의가 확인된 사람은 없어요.",
+   "punch": "법무부 압수수색에 쓰는 힘, 정권 관련 의혹에도 똑같이 쓰일까? 수사도 줄을 서나?",
+   "opinion": "유출 의혹은 규명돼야 해요. 다만 내 눈엔 야권 인사 수사엔 속도가 붙고 정권 관련 의혹엔 더디다고 보는 시각이 있어요. 경찰이 정치적 중립을 증명하려면 결과로 보여줘야 해요. 제보자 색출로 흐른다면 공익제보 위축이라는 비판도 피하기 어려워요.",
+   "sources": [
+    "파이낸셜뉴스",
+    "한국일보",
+    "세계일보"
+   ]
+  }
+ ],
+ "reel": {
+  "hook": "법무부에 경찰이 들이닥쳤다",
+  "lines": [
+   {
+    "say": "서울경찰청이 한동훈 의원 자료유출 의혹으로 법무부와 공소청 등의 압수수색 영장을 집행했다고 보도됐어요.",
+    "show": {
+     "type": "word",
+     "label": "속보",
+     "text": "법무부\n압수수색"
+    }
+   },
+   {
+    "say": "내 눈엔, 정권 껄끄러운 인물 수사에만 속도가 나는 걸로 보여요.",
+    "show": {
+     "type": "opinion",
+     "tag": "1",
+     "text": "수사 속도\n왜 선택적?"
+    }
+   },
+   {
+    "say": "한 의원은 공익제보자 색출이라며 반발하고, 민주당은 수사자료 유출 경위를 규명하라는 입장이에요.",
+    "show": {
+     "type": "vs",
+     "a": [
+      "한동훈",
+      "제보자 색출 반발"
+     ],
+     "b": [
+      "민주당",
+      "유출 경위 규명"
+     ]
+    }
+   },
+   {
+    "say": "의혹의 대상은 김승원 전 법무부 장관 후보자 관련 기소 계획서예요.",
+    "show": {
+     "type": "word",
+     "label": "수사 대상",
+     "text": "김승원 관련\n기소 계획서"
+    }
+   },
+   {
+    "say": "이건 제 해석인데, 결과가 공익제보 위축으로 번지면 경찰 신뢰만 무너져요.",
+    "show": {
+     "type": "opinion",
+     "tag": "2",
+     "text": "제보 위축\n신뢰 붕괴"
+    }
+   }
+  ],
+  "teaser": "수사 공정성이 시험대",
+  "yt_title": "한동훈 자료유출 수사, 법무부까지 압수수색 왜?",
+  "comment": "정당한 수사다 vs 정치 수사다, 여러분은 어느 쪽이세요? 👇"
+ }
+}
