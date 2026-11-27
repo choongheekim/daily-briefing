@@ -1,0 +1,240 @@
+{
+ "date": "2026-11-27",
+ "code": "MDLSUB",
+ "channel": "right",
+ "cards": [
+  {
+   "type": "cover",
+   "kicker": "안보 · 대북 대응",
+   "title": [
+    "MDL 40번 넘고",
+    "잠수함은 수리 중"
+   ],
+   "sub": "지뢰 사건 뒤에도 이어진 北 침범,\n핵시설 공개 다음날 보도된 잠수함 파손",
+   "sticker": [
+    "침범",
+    "핵공개",
+    "잠수함"
+   ],
+   "sources": [
+    "한국일보",
+    "중앙일보",
+    "경향신문"
+   ],
+   "photo_subject": "김정은",
+   "photo_query": "Kim Jong-un",
+   "photo": {
+    "path": "photo0.jpg",
+    "credit": "Photo: Владимир Смирнов / ТАСС / CC BY 4.0",
+    "title": "File:Kim Jong-un and Vladimir Putin (2023-09-13) 12 (cropped 2).jpg",
+    "mode": "color",
+    "cy": 0.35
+   }
+  },
+  {
+   "type": "story",
+   "title": "MDL 40여 회 침범",
+   "body": [
+    "합참 자료에 따르면 북한군은 지난 9월 DMZ **지뢰 폭발** 사고 이후인 10~11월 두 달 동안 군사분계선(MDL)을 **40여 회** 넘은 것으로 나타났어요. 10월 30여 회, 11월 10여 회예요.",
+    "국민의힘 유용원 의원이 이 자료를 공개했고, 언론은 우리 군의 경고사격에도 침범이 줄지 않는다고 전했어요."
+   ],
+   "note": {
+    "label": "확인 범위",
+    "text": "횟수는 합참 자료를 인용한 보도 기준이에요. 군 당국의 공식 발표 원문은 직접 확인하지 못했어요."
+   },
+   "sources": [
+    "한국일보",
+    "중앙일보"
+   ],
+   "photo_subject": "군사분계선",
+   "photo_query": "Korean Demilitarized Zone",
+   "photo": {
+    "path": "photo1.jpg",
+    "credit": "Photo: Daniel Oberhaus / CC BY-SA 4.0",
+    "title": "File:Korean Demilitarized Zone (DMZ) from the South Korean side.jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "story",
+   "title": "핵시설 공개한 김정은",
+   "body": [
+    "북한 매체는 26일 김정은 국무위원장이 새 **우라늄 농축시설**과 핵잠수함용 원자로로 추정되는 장비를 둘러봤다고 보도했어요. 화산 계열 수소탄 등 핵탄두도 공개됐어요.",
+    "김정은은 비핵화 요구를 **선전포고**로 간주하겠다는 취지로 말했고, 한국을 가장 위해한 적국으로 규정했다고 보도됐어요."
+   ],
+   "note": null,
+   "sources": [
+    "경향신문",
+    "한국일보"
+   ],
+   "photo_subject": "조선민주주의인민공화국",
+   "photo_query": "North Korea nuclear submarine",
+   "photo": {
+    "path": "photo2.jpg",
+    "credit": "Photo: Office of the President of the Russian Federation / CC BY 4.0",
+    "title": "File:North Korea people are welcoming Kim Jong-un and Vladimir Putin at Kim Il-s",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "story",
+   "title": "잠수함 2척 파손",
+   "body": [
+    "해군 주력 잠수함인 손원일급(1800t) 2척이 최근 잇따른 사고로 **파손돼 수리 중**이라고 보도됐어요. 한 척은 9월 서해에서 폐어망에 걸렸고, 다른 한 척은 정비 중 화재가 났다는 내용이에요.",
+    "한 매체는 북한이 내년 **원자력추진잠수함** 진수를 앞두고 있다는 전망이 나오는 가운데 우리 재래식 잠수함 2척이 파손됐다고 단독 보도했어요."
+   ],
+   "note": {
+    "label": "주의",
+    "text": "해군은 정비 기간을 조정해 작전 공백을 막고 있다고 밝혔고, 군 관계자는 수리 후 재투입이 가능하다고 했어요. 수리 완료 시점은 정해지지 않았어요."
+   },
+   "sources": [
+    "뉴스1"
+   ],
+   "photo_subject": "대한민국 해군",
+   "photo_query": "Son Won-il class submarine",
+   "photo": {
+    "path": "photo3.jpg",
+    "credit": "Photo: U.S. Navy photo by Mass Communication Specialist 2nd Class R / Public domain",
+    "title": "File:ROKS Munmu the Great (DDH 976).jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "numbers",
+   "title": "숫자로 보는 안보",
+   "items": [
+    {
+     "value": "40여 회",
+     "label": "10~11월\nMDL 침범"
+    },
+    {
+     "value": "2척",
+     "label": "수리 중인\n손원일급"
+    },
+    {
+     "value": "1800t",
+     "label": "손원일급\n잠수함 규모"
+    },
+    {
+     "value": "내년",
+     "label": "北 원잠\n진수 전망"
+    }
+   ],
+   "sources": [
+    "한국일보",
+    "뉴스1",
+    "경향신문"
+   ],
+   "photo_subject": null,
+   "photo_query": null
+  },
+  {
+   "type": "debate",
+   "title": "안보 대응 공방",
+   "lead": "MDL 침범 자료가 공개되고 북한이 핵시설을 공개하면서 군의 대응 수준이 도마에 올랐어요.",
+   "left": {
+    "label": "국민의힘 유용원 의원",
+    "points": [
+     "지뢰 사건 뒤에도 MDL 침범 지속",
+     "경고사격만으로는 억제 효과 의문"
+    ]
+   },
+   "right": {
+    "label": "북한",
+    "points": [
+     "비핵화 요구는 선전포고로 간주",
+     "남한은 가장 위해한 적국"
+    ]
+   },
+   "foot": "유용원 의원은 현재 대응으로는 충분한 억제가 안 된다고 지적했어요. 이에 대한 정부·군의 직접 반박은 이번 기사들에서 확인하지 못했어요.",
+   "sources": [
+    "한국일보",
+    "경향신문"
+   ],
+   "photo_subject": "국민의힘",
+   "photo_query": "People Power Party Korea",
+   "photo": {
+    "path": "photo5.jpg",
+    "credit": "Photo: U.S. Secretary of Defense / CC BY 2.0",
+    "title": "File:210317-D-BN624-1764 (51045644463).jpg",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "outro",
+   "big": "12.3",
+   "title": "다음에 볼 것\n안보 대비 태세",
+   "body": "군의 MDL 침범 대응과 손원일급 수리 일정, 북한 후속 핵 관련 행보가 관전 포인트예요. 정부·군의 공식 입장이 나오는지 지켜봐야 해요.",
+   "punch": "北은 핵시설을 꺼내는데 우리는 잠수함이 수리 중이에요. 안보는 구호가 아니라 전력으로 지키는 거예요.",
+   "opinion": "지뢰 사건 뒤에도 MDL 침범이 이어지는데 경고사격으로는 막기 어렵다는 보도예요. 핵시설 공개 바로 다음 날 주력 잠수함 2척이 수리 중이라는 소식까지 나왔어요. 정부는 대화 논의와 별개로 우리 군의 경계와 전력부터 점검하고, 사고 경위를 국민에게 투명하게 밝혀야 한다고 봐요.",
+   "sources": [
+    "한국일보",
+    "중앙일보",
+    "경향신문",
+    "뉴스1"
+   ],
+   "photo_subject": null,
+   "photo_query": null
+  }
+ ],
+ "reel": {
+  "hook": "北은 40번 넘었는데, 우린?",
+  "lines": [
+   {
+    "say": "합참 자료에 따르면 북한군이 지뢰 사고 뒤에도 10~11월 MDL을 40여 회 넘었다고 보도됐어요.",
+    "show": {
+     "type": "number",
+     "label": "10~11월 MDL 침범",
+     "value": "40",
+     "unit": "여 회"
+    }
+   },
+   {
+    "say": "내 눈엔 경고사격을 해도 침범이 줄지 않는다는 점이 가장 걱정이에요.",
+    "show": {
+     "type": "opinion",
+     "tag": "1",
+     "text": "경고사격에도\n침범 지속"
+    }
+   },
+   {
+    "say": "북한은 26일 새 우라늄 농축시설을 공개했고 김정은은 비핵화 요구를 선전포고로 간주하겠다고 했어요. 유용원 의원은 경고사격만으로는 억제가 안 된다고 지적했어요.",
+    "show": {
+     "type": "vs",
+     "a": [
+      "국민의힘 유용원",
+      "경고사격만으론 억제 안 돼"
+     ],
+     "b": [
+      "北 김정은",
+      "비핵화는 선전포고"
+     ]
+    }
+   },
+   {
+    "say": "같은 때 손원일급 잠수함 2척이 사고로 파손돼 수리 중이라고 보도됐어요.",
+    "show": {
+     "type": "number",
+     "label": "수리 중인 손원일급",
+     "value": "2",
+     "unit": "척"
+    }
+   },
+   {
+    "say": "이건 제 해석인데, 전력 공백이 길어지면 부담이 커지니 대화 논의와 별개로 점검부터 해야 한다고 봐요.",
+    "show": {
+     "type": "opinion",
+     "tag": "2",
+     "text": "대화와 별개로\n전력 점검"
+    }
+   }
+  ],
+  "teaser": "안보 구멍이 보인다",
+  "yt_title": "北 MDL 40번 넘었는데 잠수함 2척은 수리 중?",
+  "comment": "핵시설 공개에 MDL 침범까지, 정부 안보 대응 충분하다고 보시나요? 👇"
+ }
+}

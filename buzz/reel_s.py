@@ -477,7 +477,7 @@ def build(content, out_mp4, work, cards_dir=None):
     total = sum(sc.dur for sc, _ in scenes)
     enc = subprocess.Popen([FF, "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
                             "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-", "-i", audio,
-                            "-af", "loudnorm=I=-15:TP=-1.5", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+                            "-af", "adelay=500:all=1,loudnorm=I=-15:TP=-1.5", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
                             "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k", "-shortest",
                             "-movflags", "+faststart", out_mp4], stdin=subprocess.PIPE)
     t0, prev, XF = 0.0, None, 0.18
@@ -493,6 +493,8 @@ def build(content, out_mp4, work, cards_dir=None):
             last = fr
         prev = last
         t0 += sc.dur
+    for _ in range(int(0.5 * FPS)):          # 음성을 0.5초 늦춘 만큼 마지막 화면을 붙임
+        enc.stdin.write(prev.tobytes())
     enc.stdin.close()
     enc.wait()
     if enc.returncode:
