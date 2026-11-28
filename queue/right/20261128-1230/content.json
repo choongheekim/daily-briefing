@@ -1,0 +1,243 @@
+{
+ "date": "2026-11-28",
+ "code": "LEEYC2",
+ "channel": "right",
+ "cards": [
+  {
+   "type": "cover",
+   "kicker": "국회 · 법무장관 인사청문",
+   "title": [
+    "청문보고서",
+    "여당 주도 채택"
+   ],
+   "sub": "국민의힘은 표결 전 퇴장했어요\n'공소취소 선포식' 공방을 정리했어요",
+   "sticker": [
+    "퇴장",
+    "채택",
+    "공소취소"
+   ],
+   "sources": [
+    "서울신문",
+    "프레시안",
+    "파이낸셜뉴스"
+   ],
+   "photo_subject": "이재명",
+   "photo_query": "Lee Jae-myung",
+   "photo": {
+    "path": "photo0.jpg",
+    "credit": "Photo: Cheong Wa Dae (청와대) via Republic of Korea from Seoul, Republ / CC BY-SA 4.0",
+    "title": "File:66th Anniversary of the April 19 Revolution Commemoration Ceremony (5521852",
+    "mode": "color",
+    "cy": 0.35
+   }
+  },
+  {
+   "type": "timeline",
+   "title": "채택까지 흐름",
+   "items": [
+    {
+     "date": "11.6",
+     "text": "이재명 대통령, 이용철 방위사업청장을 법무장관 후보자로 **지명**"
+    },
+    {
+     "date": "11.24",
+     "text": "법사위 인사청문회, 공소취소 지휘 여부가 **핵심 쟁점**"
+    },
+    {
+     "date": "11.24",
+     "text": "후보자, 박형수 의원 질문에 가정적 질문엔 답하기 적절치 않다고 답변"
+    },
+    {
+     "date": "11.27",
+     "text": "법사위 전체회의, 청문경과보고서 **채택** 의결"
+    },
+    {
+     "date": "11.27",
+     "text": "국민의힘 위원들 표결 전 퇴장, 지명 철회 요구"
+    },
+    {
+     "date": "다음",
+     "text": "보고서 채택으로 대통령이 **임명** 절차를 진행할 수 있게 됨"
+    }
+   ],
+   "sources": [
+    "파이낸셜뉴스",
+    "서울신문",
+    "프레시안"
+   ],
+   "photo_subject": "대한민국 국회",
+   "photo_query": "National Assembly Proceeding Hall",
+   "photo": {
+    "path": "photo1.jpg",
+    "credit": "Photo: Dmthoth / CC BY-SA 3.0",
+    "title": "File:Main conference room of South korean national assembly building.JPG",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "story",
+   "title": "무슨 일이 있었나",
+   "body": [
+    "27일 국회 법사위는 전체회의를 열어 이용철 후보자의 **인사청문경과보고서**를 채택했어요.",
+    "의결에는 민주당·조국혁신당·진보당 소속 위원들만 참여했고, 국민의힘 위원들은 표결 전에 회의장을 떠났어요."
+   ],
+   "note": {
+    "label": "보고서 내용",
+    "text": "민주당의 '적격' 의견과 국민의힘의 '부적격' 의견이 **함께** 담겼어요."
+   },
+   "sources": [
+    "프레시안",
+    "서울신문",
+    "미디어펜"
+   ],
+   "photo_subject": "대한민국 국회",
+   "photo_query": "Legislation and Judiciary Committee South Korea",
+   "photo": {
+    "path": "photo2.jpg",
+    "credit": "Photo: clumsyforeigner / CC BY-SA 4.0",
+    "title": "File:National Assembly Building of the Republic of Korea.png",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "story",
+   "title": "쟁점은 공소취소",
+   "body": [
+    "24일 청문회에서는 이재명 대통령 관련 사건의 **공소취소 지휘** 가능성이 핵심이었어요.",
+    "박형수 의원이 지휘하지 않겠다고 말할 수 없느냐고 묻자, 후보자는 예단을 전제한 가정적 질문에는 답하기 적절치 않다는 입장을 유지했어요. 또 국민이 납득하기 어려운 무리한 지휘권은 행사하지 않겠다고 원론적으로 답했어요."
+   ],
+   "note": {
+    "label": "해석 엇갈려",
+    "text": "국민의힘은 지휘 가능성을 **열어뒀다**고 주장했고, 후보자는 청와대에서 공소취소 관련 연락을 받은 적이 없다고 밝혔어요."
+   },
+   "sources": [
+    "파이낸셜뉴스",
+    "뉴스토마토"
+   ],
+   "photo_subject": "대한민국 법무부",
+   "photo_query": "Ministry of Justice (South Korea)",
+   "photo": {
+    "path": "photo3.jpg",
+    "credit": "Photo: 고려 / CC BY 4.0",
+    "title": "File:Flower wreaths to express support for Prosecutor General Yoon Seok-youl sta",
+    "mode": "color",
+    "cy": 0.4
+   }
+  },
+  {
+   "type": "debate",
+   "title": "여야는 어떻게 보나",
+   "lead": "법사위 보고서 채택을 두고 여야가 정면으로 갈렸어요.",
+   "left": {
+    "label": "국민의힘",
+    "points": [
+     "법사위원들, 청문회를 '공소취소 선포식'이라 주장",
+     "농지 문제 등 자료 제출 미비 지적",
+     "지명 철회 요구"
+    ]
+   },
+   "right": {
+    "label": "더불어민주당",
+    "points": [
+     "서영교 위원장, 후보자가 충분한 자격을 갖췄다고 판단",
+     "청문회에서 도덕성 해명도 이뤄졌다는 입장"
+    ]
+   },
+   "foot": "국민의힘 박형수 의원은 일정을 일방 통보했다고 항의했고, 서영교 위원장은 적격·부적격 의견을 함께 담아 보고서를 채택했어요.",
+   "sources": [
+    "서울신문",
+    "프레시안",
+    "아시아경제"
+   ],
+   "photo_subject": "정점식",
+   "photo_query": "Jung Jeom-sik"
+  },
+  {
+   "type": "outro",
+   "big": "재가",
+   "title": "다음에 볼 것\n대통령 임명 여부",
+   "body": "보고서가 채택되면서 대통령이 임명 절차를 진행할 수 있게 됐어요. 재가 시점과 여야 충돌이 이어질지가 다음 관전 포인트예요.",
+   "punch": "대통령 사건 공소취소 얘기가 나오는 자리에서 가정적 질문이라며 말을 아낀 후보자. 분명한 한마디가 그렇게 어려웠나.",
+   "opinion": "국민이 궁금한 건 하나예요. 대통령 사건 공소취소를 지휘할 거냐 아니냐. 후보자는 무리한 지휘는 않겠다는 원론을 말했을 뿐 분명한 답은 하지 않았고, 여당은 야당이 나간 자리에서 보고서를 채택했어요. 내 눈엔 검증보다 통과의례에 가까워 보여요. 대통령은 지명을 철회하거나, 최소한 공소취소 지휘 문제에 대한 분명한 입장부터 확인해야 한다고 봐요.",
+   "sources": [
+    "서울신문",
+    "프레시안",
+    "파이낸셜뉴스",
+    "뉴스토마토",
+    "미디어펜"
+   ]
+  }
+ ],
+ "reel": {
+  "hook": "공소취소 질문에 말 아낀 후보?",
+  "lines": [
+   {
+    "say": "27일 법사위가 이용철 후보자 청문보고서를 여당 주도로 채택했고, 국민의힘은 표결 전 퇴장했어요.",
+    "show": {
+     "type": "steps",
+     "label": "법사위 27일",
+     "items": [
+      [
+       "11.24",
+       "청문회",
+       1
+      ],
+      [
+       "11.27",
+       "보고서 채택",
+       1
+      ],
+      [
+       "다음",
+       "대통령 임명 절차",
+       0
+      ]
+     ]
+    }
+   },
+   {
+    "say": "내 눈엔 야당이 나간 자리에서 채택을 진행해 검증보다 통과의례에 가까워 보여요.",
+    "show": {
+     "type": "opinion",
+     "tag": "1",
+     "text": "야당 나간 자리\n채택 진행"
+    }
+   },
+   {
+    "say": "국민의힘 법사위원들은 공소취소 선포식이라 반발했고, 서영교 위원장은 후보자가 충분한 자격을 갖췄다고 밝혔어요.",
+    "show": {
+     "type": "vs",
+     "a": [
+      "국민의힘",
+      "공소취소 선포식"
+     ],
+     "b": [
+      "서영교 위원장",
+      "충분한 자격"
+     ]
+    }
+   },
+   {
+    "say": "24일 청문회에서 후보자는 지휘 관련 질문에 가정적 질문엔 답하기 적절치 않다고 했고, 무리한 지휘권은 행사하지 않겠다고 말했어요.",
+    "show": {
+     "type": "word",
+     "label": "24일 청문회",
+     "text": "가정적 질문\n답변 부적절"
+    }
+   },
+   {
+    "say": "묻고 싶어요. 대통령 사건이 걸린 자리에서 분명한 입장을 밝히는 게 그렇게 어려운 일인가요?",
+    "show": {
+     "type": "opinion",
+     "tag": "2",
+     "text": "분명한 입장\n그게 그리 어렵나"
+    }
+   }
+  ],
+  "teaser": "검증보다 통과의례?",
+  "yt_title": "이용철, 공소취소 질문에 '가정적 질문' 답변? 야당 퇴장 속 보고서 채택",
+  "comment": "공소취소 지휘 질문에 분명한 답 없이 보고서가 채택됐어요. 여러분은 어떻게 보시나요? 👇"
+ }
+}
